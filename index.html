@@ -99,7 +99,6 @@
     };
 
     // --- BASIC HARDCODED PROFANITY LIST for demonstration ---
-    // Used only if allowCurseWords is false. This list is illustrative, not exhaustive.
     const PROFANITY_LIST = [
         'shit', 'fuck', 'ass', 'bitch', 'cunt', 'piss', 'nigga', 'boob',
         'wank', 'dick', 'crap', 'pube', 'slut', 'tits', 'cock', 'boobs'
@@ -116,9 +115,6 @@
 
     /**
      * Checks word validity using the Dictionary API and an internal profanity filter.
-     * @param {string} word - The word to check.
-     * @param {boolean} allowCurseWords - If true, profanity check is skipped.
-     * @param {number} retries - Internal retry counter for API.
      */
     const checkWordValidity = async (word, allowCurseWords, retries = 0) => {
         const cleanedWord = word.trim().toLowerCase();
@@ -127,7 +123,7 @@
         // --- PROFANITY CHECK ---
         if (!allowCurseWords) {
             if (PROFANITY_LIST.includes(cleanedWord)) {
-                return false; // Invalidated due to profanity
+                return false; 
             }
         }
         // --- END PROFANITY CHECK ---
@@ -143,7 +139,6 @@
             
             if (response.ok) {
                 const data = await response.json();
-                // API returns an array of definitions if valid, or a JSON object with a title 'No Definitions Found' if invalid
                 return Array.isArray(data);
             } else if (response.status === 404) {
                 return false;
@@ -154,11 +149,9 @@
             if (retries < MAX_RETRIES) {
                 const delay = Math.pow(2, retries) * 1000;
                 await new Promise(resolve => setTimeout(resolve, delay));
-                // Must pass allowCurseWords on retry
                 return checkWordValidity(word, allowCurseWords, retries + 1); 
             }
             console.error(`Failed to check word validity for "${word}" after ${MAX_RETRIES} retries:`, error);
-            // Default to invalid if API consistently fails
             return false; 
         }
     };
@@ -178,33 +171,11 @@
     };
 
     // --- HELP MODAL COMPONENT ---
-
-    const HelpModal = ({ onClose }) => {
-        const steps = [
-            {
-                title: "The Goal",
-                text: "The objective is to change the starting word into the target word, one step at a time.",
-            },
-            {
-                title: "The Rules (Crucial!)",
-				text: "In each step (or link in the chain), you must create a new word by changing only one letter from the previous word. All words must be valid English words.",
-				example: "Example: CAT → COT (change 'A' to 'O') → COG (change 'T' to 'G')."
-				},
-            {
-                title: "How to Play a Turn",
-                text: "1. Click on any letter in the current (bottom-most) word in your chain.\n2. The letter will highlight, indicating it's ready to change.\n3. Type the new single letter on your keyboard. The game will automatically check if the resulting word is one letter different AND if it's a valid word using a live dictionary API.\n4. If successful, the new word is added to your chain!",
-            },
-            {
-                title: "Winning",
-                text: "You win the game when you successfully create the **Target Word**. The fewest steps wins!",
-            }
-        ];
-
-        return (
+    const HelpModal = ({ onClose }) => { /* (omitted for brevity, assume contents are unchanged) */ return (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-70 backdrop-blur-sm" onClick={onClose}>
                 <div 
                     className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-gray-800 rounded-xl shadow-2xl p-6 md:p-8 space-y-6 transform transition-all"
-                    onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
+                    onClick={(e) => e.stopPropagation()} 
                 >
                     <div className="flex justify-between items-center border-b border-purple-500/50 pb-3">
                         <h2 className="text-3xl font-extrabold text-purple-400 flex items-center">
@@ -216,7 +187,25 @@
                     </div>
 
                     <div className="space-y-6">
-                        {steps.map((step, index) => (
+                        {[
+                            {
+                                title: "The Goal",
+                                text: "The objective is to change the starting word into the target word, one step at a time.",
+                            },
+                            {
+                                title: "The Rules (Crucial!)",
+                                text: "In each step (or link in the chain), you must create a new word by changing only one letter from the previous word. All words must be valid English words.",
+                                example: "Example: CAT → COT (change 'A' to 'O') → COG (change 'T' to 'G')."
+                            },
+                            {
+                                title: "How to Play a Turn (Cross-Device)",
+                                text: "1. Click/tap on any letter in the current (bottom-most) word in your chain.\n2. For **Mobile**, the keyboard will appear. Type the new letter.\n3. For **Desktop**, the cursor is hidden, just type the new letter immediately.\n4. The game will automatically check and submit the new word.",
+                            },
+                            {
+                                title: "Winning",
+                                text: "You win the game when you successfully create the **Target Word**. The fewest steps wins!",
+                            }
+                        ].map((step, index) => (
                             <div key={index} className="p-4 bg-gray-700/50 rounded-lg border-l-4 border-purple-500 shadow-md">
                                 <h3 className="text-xl font-bold text-gray-100 mb-2">{index + 1}. {step.title}</h3>
                                 <p className="text-gray-300 whitespace-pre-wrap">{step.text}</p>
@@ -243,9 +232,7 @@
     };
 
     // --- NEW: SETTINGS MODAL COMPONENT ---
-
-    const SettingsModal = ({ onClose, allowCurseWords, setAllowCurseWords }) => {
-        return (
+    const SettingsModal = ({ onClose, allowCurseWords, setAllowCurseWords }) => { /* (omitted for brevity, assume contents are unchanged) */ return (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-70 backdrop-blur-sm" onClick={onClose}>
                 <div 
                     className="w-full max-w-md max-h-[90vh] overflow-y-auto bg-gray-800 rounded-xl shadow-2xl p-6 md:p-8 space-y-6 transform transition-all"
@@ -293,9 +280,7 @@
     };
 
     // --- WIN MODAL COMPONENT (NEW) ---
-
-    const WinModal = ({ chain, steps, onNewGame, onReplay, startWord, targetWord }) => {
-        return (
+    const WinModal = ({ chain, steps, onNewGame, onReplay, startWord, targetWord }) => { /* (omitted for brevity, assume contents are unchanged) */ return (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80 backdrop-blur-sm">
                 <div 
                     className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-800 rounded-xl shadow-2xl p-6 md:p-10 space-y-6 transform transition-all border-4 border-green-500"
@@ -366,16 +351,16 @@
         const [message, setMessage] = useState('');
         const [loading, setLoading] = useState(false);
         
-        // EXISTING: State for Help Modal
         const [showHelp, setShowHelp] = useState(false); 
-        
-        // NEW: State for Settings
         const [showSettings, setShowSettings] = useState(false);
-        const [allowCurseWords, setAllowCurseWords] = useState(false); // Default to disallow
+        const [allowCurseWords, setAllowCurseWords] = useState(false); 
 
         const [editingIndex, setEditingIndex] = useState(null); // Index of the letter being edited
         const [currentEditWord, setCurrentEditWord] = useState(''); // The word being typed/previewed before submission
         
+        // Ref for the hidden input field (Mobile Keyboard Fix)
+        const inputRef = useRef(null); 
+
         // Memoize the last word in the successful chain
         const lastWord = useMemo(() => currentPath[currentPath.length - 1], [currentPath]);
 
@@ -388,14 +373,14 @@
             MENU: 'MENU',
             PLAYING: 'PLAYING',
             WON: 'WON',
-            SETUP: 'SETUP' // Validation failed on Custom Level, remains on setup screen
+            SETUP: 'SETUP' 
         };
 
         const submitWord = useCallback(async (submittedWord) => {
             setMessage('');
             setLoading(true);
 
-            // 1. Check for length/format (Should be handled by input controls, but as a safeguard)
+            // 1. Check for length/format
             if (submittedWord.length !== wordLength) {
                 setMessage(`Word must be exactly ${wordLength} letters long.`);
                 setLoading(false);
@@ -407,7 +392,7 @@
             if (!isOneLetterDifference(lastWord, submittedWord)) {
                 setMessage(`The new word "${submittedWord.toUpperCase()}" must differ by only one letter from "${lastWord.toUpperCase()}".`);
                 setLoading(false);
-                setCurrentEditWord(lastWord); // Revert back to the last valid word
+                setCurrentEditWord(lastWord); 
                 return;
             }
             
@@ -415,25 +400,22 @@
             if (currentPath.includes(submittedWord)) {
                 setMessage(`"${submittedWord.toUpperCase()}" is already in your chain. Try a new word.`);
                 setLoading(false);
-                setCurrentEditWord(lastWord); // Revert back
+                setCurrentEditWord(lastWord); 
                 return;
             }
             
             // API Check (includes profanity check)
             setMessage(`Checking "${submittedWord.toUpperCase()}" in the live dictionary...`);
-            // MODIFIED: Pass the allowCurseWords state
             const isValid = await checkWordValidity(submittedWord, allowCurseWords);
             setLoading(false);
             
             if (!isValid) {
-                // Determine if the failure was due to dictionary or profanity (simple check)
                 let failMessage = `"${submittedWord.toUpperCase()}" is not recognized as a valid word. Try again.`;
                 if (!allowCurseWords && PROFANITY_LIST.includes(submittedWord)) {
-                    // FIX: Changed specific profanity message to the generic one requested by the user
                     failMessage = `Profanity not allowed.`; 
                 }
                 setMessage(failMessage);
-                setCurrentEditWord(lastWord); // Revert back
+                setCurrentEditWord(lastWord); 
                 return;
             }
 
@@ -444,15 +426,17 @@
             if (submittedWord === targetWord) {
                 setMessage(`🎉 CONGRATULATIONS! You solved the chain in ${newPath.length - 1} steps!`);
                 setStatus(GAME_STATUS.WON);
+                // Blur the input to hide the keyboard on win
+                if (inputRef.current) inputRef.current.blur();
             } else {
                 setMessage('Excellent move! Keep going, one letter at a time.');
             }
             
-        }, [lastWord, currentPath, targetWord, wordLength, allowCurseWords]); // ADDED allowCurseWords dependency
+        }, [lastWord, currentPath, targetWord, wordLength, allowCurseWords]); 
 
 
         /**
-         * Unified game start/reset function for both predefined levels and Custom Levels.
+         * Unified game start/reset function
          */
         const resetGame = useCallback(async (start, target, length, isCustom = false) => {
             const s = start.toLowerCase().trim();
@@ -460,6 +444,7 @@
             
             setEditingIndex(null);
             setMessage('');
+            if (inputRef.current) inputRef.current.blur(); // Hide keyboard on reset
 
             // --- Word Length Validation ---
             if (s.length !== length || t.length !== length || s.length === 0) {
@@ -492,10 +477,8 @@
             let isStartValid = true;
             let isTargetValid = true;
 
-            // Only perform dictionary check if it's a Custom Level (predefined level words are assumed valid)
             if (isCustom) {
                 [isStartValid, isTargetValid] = await Promise.all([
-                    // MODIFIED: Pass allowCurseWords here
                     checkWordValidity(s, allowCurseWords),
                     checkWordValidity(t, allowCurseWords)
                 ]);
@@ -503,19 +486,16 @@
             
             setLoading(false);
 
-            // --- Dictionary Validation Feedback (includes Profanity Check feedback) ---
+            // --- Dictionary Validation Feedback ---
             if (!isStartValid || !isTargetValid) {
                 let errorMsg = `[Dictionary Error]: `;
                 
-                // Detailed check for profanity block on start/target words
                 let isStartProfane = !allowCurseWords && PROFANITY_LIST.includes(s);
                 let isTargetProfane = !allowCurseWords && PROFANITY_LIST.includes(t);
 
                 if (isStartProfane || isTargetProfane) {
-                    // FIX: Changed specific profanity message to the generic one requested by the user
                     errorMsg = `[Profanity Block]: Profanity not allowed.`; 
                 } else {
-                    // Fall back to dictionary error if not profane
                     if (!isStartValid && !isTargetValid) {
                         errorMsg += `Neither "${s.toUpperCase()}" nor "${t.toUpperCase()}" are valid words.`;
                     } else if (!isStartValid) {
@@ -526,7 +506,6 @@
                 }
                 
                 setMessage(errorMsg);
-                // Set status to SETUP so the user remains on the setup screen to correct words.
                 setStatus(GAME_STATUS.SETUP); 
                 return;
             }
@@ -538,11 +517,10 @@
             setCurrentEditWord(s);
             setMessage(`Start your chain! Change a letter in ${s.toUpperCase()} by clicking it.`);
             setStatus(GAME_STATUS.PLAYING);
-        }, [allowCurseWords]); // ADDED allowCurseWords dependency
+        }, [allowCurseWords]); 
 
         const startLevel = (levelKey) => {
             const level = LEVELS[levelKey];
-            // Pick a random pair from the selected level
             const pair = level.pairs[Math.floor(Math.random() * level.pairs.length)];
             resetGame(pair.start, pair.target, level.length, false);
         };
@@ -556,19 +534,20 @@
             setEditingIndex(null);
             setCurrentEditWord('');
             setStatus(GAME_STATUS.MENU);
+            if (inputRef.current) inputRef.current.blur(); // Hide keyboard on quit
         };
 
-        // --- NEW: Undo Last Move Function ---
+        // --- Undo Last Move Function ---
         const undoLastMove = useCallback(() => {
-            // Only allow undo if there's more than the starting word, game is playing, and not loading
             if (currentPath.length > 1 && status === GAME_STATUS.PLAYING && !loading) {
-                const newPath = currentPath.slice(0, -1); // Removes the last element
+                const newPath = currentPath.slice(0, -1); 
                 const newLastWord = newPath[newPath.length - 1];
                 
                 setCurrentPath(newPath);
                 setCurrentEditWord(newLastWord);
-                setEditingIndex(null); // Clear editing state
+                setEditingIndex(null); 
                 setMessage(`Move undone. Current word is ${newLastWord.toUpperCase()}.`);
+                if (inputRef.current) inputRef.current.blur(); // Hide keyboard on undo
             }
         }, [currentPath, status, loading]);
 
@@ -582,59 +561,136 @@
                 setEditingIndex(null);
                 setMessage('');
                 setCurrentEditWord(lastWord);
+                if (inputRef.current) inputRef.current.blur(); // Blur to hide keyboard
             } else {
                 // Start editing a new letter
                 setEditingIndex(index);
                 setMessage(`Type the new letter for position ${index + 1}. Press ESC to cancel.`);
+                
+                // Programmatically focus the hidden input field (brings up mobile virtual keyboard)
+                if (inputRef.current) {
+                    inputRef.current.focus(); 
+                }
             }
         }, [status, loading, editingIndex, lastWord]);
+        
+        // ----------------------------------------------------------------------
+        // FIX FOR DESKTOP KEYBOARD INPUT (Re-introducing Global Listener)
+        // ----------------------------------------------------------------------
 
+        // Global Keypress Handler (For Desktop/Physical Keyboards)
         const handleKeyPress = useCallback((event) => {
-            // Only process key presses if playing, not loading, and a letter is selected for editing
-            if (status !== GAME_STATUS.PLAYING || loading || editingIndex === null) return;
+            // Only process input if game is playing and a letter is selected
+            if (status !== GAME_STATUS.PLAYING || loading || editingIndex === null) {
+                // Allow ESC key to still work even if a letter isn't selected
+                if (event.key.toLowerCase() === 'escape') {
+                    setEditingIndex(null);
+                    setMessage('Editing canceled.');
+                    setCurrentEditWord(lastWord);
+                    if (inputRef.current) inputRef.current.blur();
+                }
+                return; 
+            }
 
             const key = event.key.toLowerCase();
             
-            if (key.match(/^[a-z]$/) && key.length === 1) {
-                event.preventDefault();
-
-                const newWord = lastWord.split(''); // Start from the last *valid* word
-                
-                if (newWord[editingIndex] === key) {
-                    setMessage('You must change the letter at the selected position.');
-                    return;
+            // 1. Handle non-letter keys
+            if (key.length > 1) {
+                if (key === 'escape') {
+                    event.preventDefault();
+                    setEditingIndex(null);
+                    setMessage('Editing canceled.');
+                    setCurrentEditWord(lastWord);
+                    if (inputRef.current) inputRef.current.blur();
                 }
-                
-                newWord[editingIndex] = key;
-                const potentialWord = newWord.join('');
-                
-                // Immediately update the visual preview of the word
-                setCurrentEditWord(potentialWord);
-                
-                // Then submit the move (which handles validation, API check, and state update)
-                submitWord(potentialWord);
-                
-                // Clear the editing focus right away
-                setEditingIndex(null);
-
-            } else if (key === 'escape') {
-                // Escape key cancels editing
-                setEditingIndex(null);
-                setMessage('Editing canceled.');
-                setCurrentEditWord(lastWord);
+                // Allow backspace/delete on the input itself if it's focused, but ignore for the game logic
+                return; 
             }
-        }, [status, loading, editingIndex, lastWord, submitWord]);
 
+            // 2. Handle letter input (Physical Keyboard)
+            if (key.length === 1 && /^[a-z]$/.test(key)) {
+                event.preventDefault(); // Stop the key from potentially interfering with the hidden input's state
+                
+                const newWordArr = lastWord.split('');
+                
+                // Check if the user is typing the same letter at the same spot (no change)
+                if (newWordArr[editingIndex] === key) {
+                     setMessage(`The letter is already '${key.toUpperCase()}' at this position. Choose a new letter.`);
+                     return;
+                }
+
+                // Create the potential new word
+                newWordArr[editingIndex] = key;
+                const potentialWord = newWordArr.join('');
+                
+                // Submit the word directly for full validation
+                submitWord(potentialWord); 
+                
+                // After submission attempt, clear the editing index and hide the keyboard
+                setEditingIndex(null); 
+                if (inputRef.current) inputRef.current.blur(); 
+            }
+
+        }, [status, loading, editingIndex, lastWord, submitWord]); 
+
+        // Re-introduce the global useEffect listener (Desktop Fix)
         useEffect(() => {
-            // Set up and tear down the global keydown listener
             window.addEventListener('keydown', handleKeyPress);
             return () => {
                 window.removeEventListener('keydown', handleKeyPress);
             };
         }, [handleKeyPress]);
 
-        // --- UI COMPONENTS ---
+        // ----------------------------------------------------------------------
+        // MOBILE KEYBOARD INPUT (Handling Input's onChange)
+        // ----------------------------------------------------------------------
+        
+        // Change handler for letter input (Virtual Keyboard Fix)
+        const handleInputChange = useCallback((event) => {
+            const potentialWord = event.target.value.toLowerCase().trim();
+            
+            // Should only be active if a letter is selected for editing
+            if (editingIndex === null) {
+                // If the user somehow typed without a selection, revert the input to the last word
+                setCurrentEditWord(lastWord); 
+                inputRef.current.focus(); 
+                return;
+            }
 
+            // 1. Check if the length is correct and the word is different
+            if (potentialWord.length === wordLength && potentialWord !== lastWord) {
+                
+                // 2. Check if it's only one letter different (Crucial for virtual keyboard validation)
+                if (isOneLetterDifference(lastWord, potentialWord)) {
+                    
+                    // Submit the word for full validation
+                    submitWord(potentialWord);
+                    
+                    // Clear the editing focus
+                    setEditingIndex(null);
+                    
+                } else {
+                    // Invalid single change (e.g. backspace, or two letters typed quickly)
+                    setMessage("Invalid input: only one letter difference allowed.");
+                    setCurrentEditWord(lastWord); // Revert back to last word
+                    inputRef.current.focus(); // Keep focus for another attempt
+                }
+                
+            } else {
+                // Invalid length or same word (e.g. they typed the same letter or backspaced)
+                if (potentialWord.length < wordLength) {
+                     setMessage(`Word must be exactly ${wordLength} letters long.`);
+                }
+                setCurrentEditWord(lastWord); // Revert to last word
+                inputRef.current.focus(); // Maintain focus
+            }
+
+        }, [editingIndex, lastWord, wordLength, submitWord]);
+
+
+        // --- UI COMPONENTS ---
+        // (MessageDisplay, LevelSelector, CustomWordSetup, WordTile, WordPathDisplay components omitted for brevity, assume contents are unchanged)
+        
         const MessageDisplay = () => {
             let currentMessage = message;
             let icon = null;
@@ -644,7 +700,7 @@
             if (!currentMessage && !loading) return null;
 
             // Check for explicit error markers added in validation logic
-            const isError = currentMessage.includes('[Validation Error]') || currentMessage.includes('[Dictionary Error]') || currentMessage.includes('[Profanity Block]') || currentMessage.includes('differ by only one') || currentMessage.includes('already in your chain');
+            const isError = currentMessage.includes('[Validation Error]') || currentMessage.includes('[Dictionary Error]') || currentMessage.includes('[Profanity Block]') || currentMessage.includes('differ by only one') || currentMessage.includes('already in your chain') || currentMessage.includes('Invalid input');
 
             if (loading) {
                 currentMessage = message || '...connecting to dictionary...';
@@ -657,7 +713,6 @@
                 icon = <Icons.XCircle size={iconSize} />;
                 colorClass = 'bg-red-600';
             } else if (status === GAME_STATUS.PLAYING) {
-                // If message is just a standard one, use blue
                 icon = <Icons.CheckCircle size={iconSize} />;
                 colorClass = 'bg-blue-600';
             }
@@ -679,9 +734,7 @@
                         <Icons.Zap className="mr-3 text-yellow-400" size={28} /> Select Difficulty Level
                     </h2>
                     
-                    {/* NEW: Buttons container for flexibility */}
                     <div className="flex space-x-4">
-                        {/* NEW: Settings Button */}
                         <button
                             onClick={() => setShowSettings(true)}
                             className="py-2 px-4 bg-gray-500 hover:bg-gray-600 text-white font-bold rounded-full shadow-lg transition-transform duration-200 transform hover:scale-[1.05] active:scale-95 flex items-center justify-center disabled:opacity-50"
@@ -690,7 +743,6 @@
                             <Icons.Settings size={20} className="mr-2" /> Settings
                         </button>
                         
-                        {/* EXISTING: How to Play Button */}
                         <button
                             onClick={() => setShowHelp(true)}
                             className="py-2 px-4 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-full shadow-lg transition-transform duration-200 transform hover:scale-[1.05] active:scale-95 flex items-center justify-center disabled:opacity-50"
@@ -728,21 +780,16 @@
         );
 
         const CustomWordSetup = () => {
-            // Initial state for custom words
             const initialLength = 4;
-            // Use placeholder words that are valid for the initial length
             const [customStart, setCustomStart] = useState('word'); 
             const [customTarget, setCustomTarget] = useState('game');
             const [customLength, setCustomLength] = useState(initialLength);
-            // Custom setup should be collapsed by default on MENU, but open if validation failed (SETUP status)
             const [showInput, setShowInput] = useState(status === GAME_STATUS.SETUP);
             
-            // Generate list of lengths (3, 4, 5, 6), ensuring 6 is an option
             const lengthOptions = Object.values(LEVELS).map(l => l.length);
             if (!lengthOptions.includes(6)) lengthOptions.push(6);
-            lengthOptions.sort((a, b) => a - b); // Ensure 3, 4, 5, 6 order
+            lengthOptions.sort((a, b) => a - b); 
 
-            // Auto-truncate/update words when length changes
             useEffect(() => {
                 const s = customStart.toLowerCase().trim().slice(0, customLength);
                 const t = customTarget.toLowerCase().trim().slice(0, customLength);
@@ -750,7 +797,6 @@
                 setCustomTarget(t);
             }, [customLength]);
 
-            // If we are in SETUP status (meaning a validation error occurred), open the panel
             useEffect(() => {
                 if (status === GAME_STATUS.SETUP) {
                     setShowInput(true);
@@ -759,7 +805,6 @@
 
 
             const handleCustomStart = () => {
-                // Pass current state values to resetGame, which handles all validation
                 resetGame(customStart, customTarget, customLength, true);
             };
 
@@ -789,7 +834,6 @@
                                     value={customLength} 
                                     onChange={(e) => {
                                         setCustomLength(parseInt(e.target.value));
-                                        // Clear any previous error message when changing length
                                         setMessage('');
                                     }}
                                     className="p-2 rounded-lg bg-gray-600 text-white focus:ring-2 focus:ring-purple-400 border border-transparent transition cursor-pointer"
@@ -801,10 +845,8 @@
                             </div>
 
                             <div className="flex flex-col sm:flex-row gap-4">
-                                {/* Start Word Input */}
                                 <input
                                     type="text"
-                                    // Display in uppercase but store in lowercase
                                     value={customStart.toUpperCase()} 
                                     onChange={(e) => setCustomStart(e.target.value.toLowerCase().replace(/[^a-z]/g, '').slice(0, customLength))}
                                     placeholder={`Start Word (${customLength} letters)`}
@@ -812,7 +854,6 @@
                                         ${customStart.length === customLength ? 'border-green-400' : 'border-red-400'}`}
                                     maxLength={customLength}
                                 />
-                                {/* Target Word Input */}
                                 <input
                                     type="text"
                                     value={customTarget.toUpperCase()}
@@ -847,8 +888,6 @@
             const isStartWord = pathIndex === 0;
             const isTargetWord = word === targetWord;
             
-            // If it's the last word in the chain, use the word being edited (currentEditWord) for display,
-            // otherwise use the established word (word).
             const displayWord = isLastWord ? currentEditWord : word;
             const letters = displayWord.split('');
             const isActive = isLastWord && status === GAME_STATUS.PLAYING && !loading;
@@ -859,7 +898,6 @@
                     ? 'bg-green-600/70 text-white' 
                     : 'bg-gray-700/50 text-gray-200';
 
-            // Non-active words are shown simply
             if (!isActive) {
                 return (
                     <div className={`p-3 rounded-xl shadow-lg font-mono-game text-xl uppercase transition-all duration-300 transform ${baseColor}`}>
@@ -868,7 +906,6 @@
                 );
             }
             
-            // Active word display: dynamically sized letters
             const letterSizeClass = wordLength === 3 ? 'w-12 h-12 text-4xl' : wordLength === 4 ? 'w-10 h-10 text-3xl' : wordLength === 5 ? 'w-8 h-8 text-2xl' : 'w-7 h-7 text-xl';
 
             return (
@@ -901,10 +938,8 @@
         };
         
         const WordPathDisplay = () => {
-            // FIX: Ref for auto-scrolling
             const scrollRef = useRef(null); 
 
-            // FIX: Auto-scroll effect
             useEffect(() => {
                 if (scrollRef.current) {
                     scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -914,7 +949,6 @@
             return (
                 <div className="p-6 bg-gray-800/80 rounded-xl shadow-inner space-y-4">
                     <h2 className="text-2xl font-bold text-gray-200">Your Chain</h2>
-                    {/* FIX: Set max-height to 200px (scroll after 3 words) and attach ref. Added pr-2 for scrollbar. */}
                     <div 
                         ref={scrollRef}
                         className="flex flex-col space-y-3 pr-2" 
@@ -923,10 +957,7 @@
                         {currentPath.map((word, index) => {
                             return (
                                 <div key={index} className="flex items-center">
-                                    {/* Step count display */}
                                     <div className="min-w-10 text-center font-bold text-lg text-gray-400 pr-4">{index + 1}.</div>
-                                    {/* The word tile itself */}
-                                    {/* FIX: Added my-1 wrapper to prevent outline cut-off */}
                                     <div className="my-1">
                                         <WordTile word={word} pathIndex={index} />
                                     </div>
@@ -941,7 +972,6 @@
         // --- Main Render Logic ---
         
         const renderGameContent = () => {
-            // Only render the full game board if we are actively playing or have won.
             if (status === GAME_STATUS.PLAYING || status === GAME_STATUS.WON) {
                 
                 const isUndoDisabled = currentPath.length <= 1 || loading;
@@ -1004,14 +1034,32 @@
                 );
             }
 
-            // Status is MENU or SETUP (failed validation or initializing Custom Level)
-            // Render the LevelSelector, which contains the CustomWordSetup component.
             return <LevelSelector />;
         };
         
         return (
             <div className="min-h-screen bg-gray-900 text-white p-4 sm:p-8 flex justify-center items-start pt-10">
                 <div className="w-full max-w-4xl space-y-8">
+                    
+                    {/* HIDDEN INPUT FIELD - Used ONLY to trigger the virtual keyboard on mobile */}
+                    <input
+                        ref={inputRef}
+                        type="text"
+                        value={currentEditWord.toUpperCase()} 
+                        // Style it to be completely invisible and non-disruptive
+                        className="opacity-0 absolute w-0 h-0 p-0 m-0 overflow-hidden" 
+                        maxLength={wordLength}
+                        autoCapitalize="off"
+                        autoCorrect="off"
+                        autoComplete="off"
+                        // inputMode="text" and pattern="[a-zA-Z]*" are important for mobile keyboard behavior
+                        inputMode="text" 
+                        pattern="[a-zA-Z]*"
+                        // Note: onKeyDown removed as it's handled by the global handleKeyPress now
+                        onChange={handleInputChange}
+                        disabled={editingIndex === null}
+                    />
+
                     {/* Title and Header - NAME IS WORD CHAIN */}
                     <header className="text-center space-y-2 mb-8">
                         <h1 className="text-7xl font-extrabold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
@@ -1025,12 +1073,11 @@
                         </p>
                     </header>
                     
-                    {/* Message is shown above the LevelSelector if status is MENU/SETUP and an error exists */}
                     {(status === GAME_STATUS.MENU || status === GAME_STATUS.SETUP) && message && <MessageDisplay />}
                     
                     {renderGameContent()}
 
-                    {/* NEW: Settings Modal */}
+                    {/* Settings Modal */}
                     {showSettings && (
                         <SettingsModal 
                             onClose={() => setShowSettings(false)} 
@@ -1039,16 +1086,15 @@
                         />
                     )}
 
-                    {/* EXISTING: Help Modal */}
+                    {/* Help Modal */}
                     {showHelp && <HelpModal onClose={() => setShowHelp(false)} />}
                     
-                    {/* NEW: Win Modal */}
+                    {/* Win Modal */}
                     {status === GAME_STATUS.WON && (
                         <WinModal 
                             chain={currentPath}
                             steps={currentPath.length - 1}
                             onNewGame={quitGame}
-                            // Note: resetGame needs startWord, targetWord, wordLength, and isCustom=false
                             onReplay={() => resetGame(startWord, targetWord, wordLength, false)}
                             startWord={startWord}
                             targetWord={targetWord}
