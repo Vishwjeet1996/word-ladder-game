@@ -18,7 +18,7 @@
         .font-mono-game {
             font-family: 'Space Mono', monospace;
         }
-        /* Ensure the input is visible when active */
+        /* Ensure the input is hidden but focusable */
         .mobile-input {
             position: absolute;
             opacity: 0;
@@ -117,7 +117,7 @@
 	
 	// Whitelist for common, short words that the live API might occasionally fail to find.
     const LOCAL_WORD_WHITELIST = [
-        'look', 'tight', 'good', 'door', 'fish', 'four', 'five', 'tree', 'zero', 'jump', 'move', 'hold', 'send'
+        'look', 'good', 'door', 'fish', 'four', 'five', 'tree', 'zero', 'jump', 'move', 'hold', 'send'
     ];
 
     /**
@@ -183,27 +183,23 @@
         return diffCount === 1;
     };
 
-    // --- MODAL COMPONENTS (Unchanged from previous version for brevity) ---
-    // ... [HelpModal, SettingsModal, WinModal code remains the same] ...
-    
-    // --- HELP MODAL COMPONENT ---
+    // --- HELP MODAL COMPONENT (Updated with CAT->COT example and current instructions) ---
 
     const HelpModal = ({ onClose }) => {
-    const steps = [
+        const steps = [
             {
-                // MODIFIED: Added the 'example' key here
                 title: "1. The Goal and Rules",
-                text: "The goal is to transform the Start Word into the Goal Word by changing only one letter at a time.\n\nEvery word you create must be a valid English word and cannot be a word you've used before in the current chain.",
-                example: "Example: CAT → COT (change 'A' to 'O') → COG (change 'T' to 'G')."
-            },
+                text: "The objective is to change the starting word into the target word, one step at a time.\n\nIn each step, you must create a new word by changing only one letter from the previous word. All words must be valid English words and cannot be words you've used before in the chain.",
+				example: "Example: CAT → COT (change 'A' to 'O') → COG (change 'T' to 'G')." // Added Example
+			},
             {
                 title: "2. How to Make a Move",
-                // This text block is updated to match the final working instructions.
-                text: "1. Click a letter in the bottom-most word (the candidate).\n2. Use your keyboard to type the new single letter.\n3. The word is instantly checked for validity and connection.\n4. If valid, the new word is automatically added to your chain."
+                // Updated instructions for instant submission logic
+                text: "1. Click the letter you want to change in the bottom-most word.\n2. When the cursor appears, use your keyboard to type the new single letter.\n3. The game instantly checks the word for validity and connection.\n4. If valid, the new word is added and you're ready for the next move!"
             },
             {
-                title: "3. Win Condition",
-                text: "Reach the Goal Word! The number of steps you take will be compared to the minimum recommended length.",
+                title: "3. Winning",
+                text: "You win the game when you successfully create the **Target Word**. The fewest steps wins!",
             }
         ];
 
@@ -225,7 +221,7 @@
                     <div className="space-y-6">
                         {steps.map((step, index) => (
                             <div key={index} className="p-4 bg-gray-700/50 rounded-lg border-l-4 border-purple-500 shadow-md">
-                                <h3 className="text-xl font-bold text-gray-100 mb-2">{index + 1}. {step.title}</h3>
+                                <h3 className="text-xl font-bold text-gray-100 mb-2">{step.title}</h3>
                                 <p className="text-gray-300 whitespace-pre-wrap">{step.text}</p>
                                 {step.example && (
                                     <p className="mt-2 p-2 bg-gray-800 rounded text-yellow-400 font-mono-game text-lg border border-yellow-500/50">
@@ -249,7 +245,7 @@
         );
     };
 
-    // --- NEW: SETTINGS MODAL COMPONENT ---
+    // --- SETTINGS MODAL COMPONENT ---
 
     const SettingsModal = ({ onClose, allowCurseWords, setAllowCurseWords }) => {
         return (
@@ -299,7 +295,7 @@
         );
     };
 
-    // --- WIN MODAL COMPONENT (NEW) ---
+    // --- WIN MODAL COMPONENT ---
 
     const WinModal = ({ chain, steps, onNewGame, onReplay, startWord, targetWord }) => {
         return (
@@ -385,6 +381,8 @@
         
         // NEW: Ref for the temporary input box for easier focus management
         const tempInputRef = useRef(null); 
+        // 🚨 NEW LINE: Ref for the entire word chain container (for click-away logic)
+        const pathContainerRef = useRef(null); 
         
         // Memoize the last word in the successful chain
         const lastWord = useMemo(() => currentPath[currentPath.length - 1], [currentPath]);
@@ -580,11 +578,12 @@
         const handleLetterClick = useCallback((index) => {
             if (status !== GAME_STATUS.PLAYING || loading) return;
 
+            // Clicking the already active letter cancels editing and dismisses the keyboard
             if (editingIndex === index) {
-                // Clicking the already active letter cancels editing
                 setEditingIndex(null);
                 setMessage('');
                 setCurrentEditWord(lastWord);
+                tempInputRef.current?.blur(); // Explicitly blur to close mobile keyboard
             } else {
                 // Start editing a new letter
                 setEditingIndex(index);
@@ -596,7 +595,7 @@
             }
         }, [status, loading, editingIndex, lastWord]);
 
-        // --- NEW: Input Change Handler (Replaces handleKeyPress) ---
+        // --- Input Change Handler ---
 
         const handleInputChange = useCallback((event) => {
             // This function is only attached to the temporary input, so we know we are editing
@@ -610,6 +609,8 @@
                     setMessage('You must change the letter at the selected position.');
                     // Clear the input value to prevent it from holding the same character
                     event.target.value = ''; 
+                    // Immediately unfocus the input to dismiss the keyboard after a character is processed
+                    tempInputRef.current?.blur();
                     return;
                 }
                 
@@ -635,9 +636,8 @@
 
         }, [editingIndex, lastWord, submitWord]);
         
-        // --- NEW: Global Keydown Listener for Desktop/Escape ---
-        // This is re-introduced specifically for desktop (physical keyboard) ESC functionality.
-
+        // --- Global Keydown Listener for Desktop/Escape ---
+        // Handles physical keyboard input for the single character move AND the ESC key
         const handleGlobalKeyPress = useCallback((event) => {
             if (status !== GAME_STATUS.PLAYING || loading) return;
 
@@ -645,8 +645,6 @@
             
             // Allow physical key press for typing if editingIndex is active
             if (key.match(/^[a-z]$/) && key.length === 1 && editingIndex !== null) {
-                // For desktop, we will manually route the key press here
-                // Note: For mobile, the virtual keyboard will update the value of the focused input, triggering handleInputChange.
                 
                 event.preventDefault(); // Prevent default action (like form submission, etc.)
 
@@ -686,8 +684,31 @@
         }, [handleGlobalKeyPress]); // Dependency array ensures it updates when handlers change
 
 
-        // --- UI COMPONENTS (Unchanged for brevity) ---
-        // ... [MessageDisplay, LevelSelector, CustomWordSetup, WordTile, WordPathDisplay code remains the same] ...
+        // --- NEW: Global Click Listener for Click-Away-To-Cancel ---
+        useEffect(() => {
+            if (status !== GAME_STATUS.PLAYING || loading) return;
+            if (editingIndex === null) return;
+            
+            const handleClickOutside = (event) => {
+                // If we are currently editing, and the click target is NOT inside the word path container
+                if (pathContainerRef.current && !pathContainerRef.current.contains(event.target)) {
+                    // This is a click away, so cancel editing
+                    setEditingIndex(null); 
+                    setCurrentEditWord(lastWord);
+                    setMessage('Editing canceled.');
+                }
+            };
+
+            // Use 'mousedown' which often fires before 'onClick' and 'onBlur' in a reliable sequence
+            document.addEventListener('mousedown', handleClickOutside);
+            
+            return () => {
+                document.removeEventListener('mousedown', handleClickOutside);
+            };
+        }, [status, loading, editingIndex, lastWord]);
+
+
+        // --- UI COMPONENTS ---
         
         const MessageDisplay = () => {
             let currentMessage = message;
@@ -952,11 +973,7 @@
                                     // Use a temporary value to force focus on re-render (will be cleared immediately)
                                     value=""
                                     onChange={handleInputChange} 
-                                    onBlur={() => {
-                                        // If the user taps away, cancel editing
-                                        setEditingIndex(null); 
-                                        setCurrentEditWord(lastWord);
-                                    }}
+                                    // 🚨 onBlur REMOVED to fix the desktop double-click issue
                                     maxLength="1"
                                     autoFocus // Attempt to auto-focus on creation
                                     autoCorrect="off"
@@ -973,7 +990,7 @@
             );
         };
         
-        const WordPathDisplay = () => {
+        const WordPathDisplay = ({ pathRef }) => { // 🚨 MODIFIED: Accepts pathRef
             const scrollRef = useRef(null); 
 
             useEffect(() => {
@@ -983,7 +1000,11 @@
             }, [currentPath]);
 
             return (
-                <div className="p-6 bg-gray-800/80 rounded-xl shadow-inner space-y-4">
+                // 🚨 MODIFIED: Attach pathRef to the container
+                <div 
+                    ref={pathRef}
+                    className="p-6 bg-gray-800/80 rounded-xl shadow-inner space-y-4" 
+                >
                     <h2 className="text-2xl font-bold text-gray-200">Your Chain</h2>
                     <div 
                         ref={scrollRef}
@@ -1065,7 +1086,8 @@
 
 
                         {/* Word Path Display (only show if path exists) */}
-                        {currentPath.length > 0 && <WordPathDisplay />}
+                        {/* 🚨 MODIFIED: Pass the ref here */}
+                        {currentPath.length > 0 && <WordPathDisplay pathRef={pathContainerRef} />} 
                     </>
                 );
             }
@@ -1095,9 +1117,6 @@
                     
                     {renderGameContent()}
                     
-                    {/* The temporary input is now INSIDE the WordTile, where it is focused */}
-
-
                     {/* NEW: Settings Modal */}
                     {showSettings && (
                         <SettingsModal 
