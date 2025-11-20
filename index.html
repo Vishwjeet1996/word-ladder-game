@@ -117,7 +117,7 @@
 	
 	// Whitelist for common, short words that the live API might occasionally fail to find.
     const LOCAL_WORD_WHITELIST = [
-        'look', 'good', 'door', 'fish', 'four', 'five', 'tree', 'zero', 'jump', 'move', 'hold', 'send'
+        'look', 'tight', 'good', 'door', 'fish', 'four', 'five', 'tree', 'zero', 'jump', 'move', 'hold', 'send'
     ];
 
     /**
@@ -189,23 +189,21 @@
     // --- HELP MODAL COMPONENT ---
 
     const HelpModal = ({ onClose }) => {
-        const steps = [
+    const steps = [
             {
-                title: "The Goal",
-                text: "The objective is to change the starting word into the target word, one step at a time.",
+                // MODIFIED: Added the 'example' key here
+                title: "1. The Goal and Rules",
+                text: "The goal is to transform the Start Word into the Goal Word by changing only one letter at a time.\n\nEvery word you create must be a valid English word and cannot be a word you've used before in the current chain.",
+                example: "Example: CAT → COT (change 'A' to 'O') → COG (change 'T' to 'G')."
             },
             {
-                title: "The Rules (Crucial!)",
-				text: "In each step (or link in the chain), you must create a new word by changing only one letter from the previous word. All words must be valid English words.",
-				example: "Example: CAT → COT (change 'A' to 'O') → COG (change 'T' to 'G')."
-				},
-            {
-                title: "How to Play a Turn",
-                text: "1. Click on any letter in the current (bottom-most) word in your chain.\n2. A temporary input box will appear. Type the new single letter you want to use.\n3. The game will automatically check if the resulting word is valid and one letter different. If successful, the new word is added to your chain!",
+                title: "2. How to Make a Move",
+                // This text block is updated to match the final working instructions.
+                text: "1. Click a letter in the bottom-most word (the candidate).\n2. Use your keyboard to type the new single letter.\n3. The word is instantly checked for validity and connection.\n4. If valid, the new word is automatically added to your chain."
             },
             {
-                title: "Winning",
-                text: "You win the game when you successfully create the **Target Word**. The fewest steps wins!",
+                title: "3. Win Condition",
+                text: "Reach the Goal Word! The number of steps you take will be compared to the minimum recommended length.",
             }
         ];
 
