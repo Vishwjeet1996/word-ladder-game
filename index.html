@@ -18,6 +18,12 @@
         .font-mono-game {
             font-family: 'Space Mono', monospace;
         }
+        /* Ensure the input is visible when active */
+        .mobile-input {
+            position: absolute;
+            opacity: 0;
+            z-index: -10;
+        }
     </style>
 </head>
 <body class="bg-gray-900">
@@ -177,6 +183,9 @@
         return diffCount === 1;
     };
 
+    // --- MODAL COMPONENTS (Unchanged from previous version for brevity) ---
+    // ... [HelpModal, SettingsModal, WinModal code remains the same] ...
+    
     // --- HELP MODAL COMPONENT ---
 
     const HelpModal = ({ onClose }) => {
@@ -192,7 +201,7 @@
 				},
             {
                 title: "How to Play a Turn",
-                text: "1. Click on any letter in the current (bottom-most) word in your chain.\n2. The letter will highlight, indicating it's ready to change.\n3. Type the new single letter on your keyboard. The game will automatically check if the resulting word is one letter different AND if it's a valid word using a live dictionary API.\n4. If successful, the new word is added to your chain!",
+                text: "1. Click on any letter in the current (bottom-most) word in your chain.\n2. A temporary input box will appear. Type the new single letter you want to use.\n3. The game will automatically check if the resulting word is valid and one letter different. If successful, the new word is added to your chain!",
             },
             {
                 title: "Winning",
@@ -355,6 +364,7 @@
         );
     };
 
+
     // --- MAIN APP COMPONENT ---
 
     const App = () => {
@@ -366,18 +376,17 @@
         const [message, setMessage] = useState('');
         const [loading, setLoading] = useState(false);
         
-        // EXISTING: State for Help Modal
+        // State for Help/Settings Modal
         const [showHelp, setShowHelp] = useState(false); 
-        
-        // NEW: State for Settings
         const [showSettings, setShowSettings] = useState(false);
-        const [allowCurseWords, setAllowCurseWords] = useState(false); // Default to disallow
+        const [allowCurseWords, setAllowCurseWords] = useState(false); 
 
+        // State for managing the letter currently being edited
         const [editingIndex, setEditingIndex] = useState(null); // Index of the letter being edited
         const [currentEditWord, setCurrentEditWord] = useState(''); // The word being typed/previewed before submission
         
-        // FIX 1: Add useRef for the hidden input field
-        const inputRef = useRef(null); 
+        // NEW: Ref for the temporary input box for easier focus management
+        const tempInputRef = useRef(null); 
         
         // Memoize the last word in the successful chain
         const lastWord = useMemo(() => currentPath[currentPath.length - 1], [currentPath]);
@@ -391,17 +400,17 @@
             MENU: 'MENU',
             PLAYING: 'PLAYING',
             WON: 'WON',
-            SETUP: 'SETUP' // Validation failed on Custom Level, remains on setup screen
+            SETUP: 'SETUP' 
         };
 
         const submitWord = useCallback(async (submittedWord) => {
             setMessage('');
             setLoading(true);
             
-            // Unfocus the input immediately after submission to dismiss the keyboard
-            inputRef.current?.blur();
+            // Clear editing state after submission attempt
+            setEditingIndex(null);
 
-            // 1. Check for length/format (Should be handled by input controls, but as a safeguard)
+            // 1. Check for length/format 
             if (submittedWord.length !== wordLength) {
                 setMessage(`Word must be exactly ${wordLength} letters long.`);
                 setLoading(false);
@@ -427,15 +436,12 @@
             
             // API Check (includes profanity check)
             setMessage(`Checking "${submittedWord.toUpperCase()}" in the live dictionary...`);
-            // MODIFIED: Pass the allowCurseWords state
             const isValid = await checkWordValidity(submittedWord, allowCurseWords);
             setLoading(false);
             
             if (!isValid) {
-                // Determine if the failure was due to dictionary or profanity (simple check)
                 let failMessage = `"${submittedWord.toUpperCase()}" is not recognized as a valid word. Try again.`;
                 if (!allowCurseWords && PROFANITY_LIST.includes(submittedWord)) {
-                    // FIX: Changed specific profanity message to the generic one requested by the user
                     failMessage = `Profanity not allowed.`; 
                 }
                 setMessage(failMessage);
@@ -454,11 +460,11 @@
                 setMessage('Excellent move! Keep going, one letter at a time.');
             }
             
-        }, [lastWord, currentPath, targetWord, wordLength, allowCurseWords]); // ADDED allowCurseWords dependency
+        }, [lastWord, currentPath, targetWord, wordLength, allowCurseWords]); 
 
 
         /**
-         * Unified game start/reset function for both predefined levels and Custom Levels.
+         * Unified game start/reset function
          */
         const resetGame = useCallback(async (start, target, length, isCustom = false) => {
             const s = start.toLowerCase().trim();
@@ -466,8 +472,6 @@
             
             setEditingIndex(null);
             setMessage('');
-            // Ensure keyboard is closed on game reset
-            inputRef.current?.blur(); 
 
             // --- Word Length Validation ---
             if (s.length !== length || t.length !== length || s.length === 0) {
@@ -500,10 +504,9 @@
             let isStartValid = true;
             let isTargetValid = true;
 
-            // Only perform dictionary check if it's a Custom Level (predefined level words are assumed valid)
+            // Only perform dictionary check if it's a Custom Level 
             if (isCustom) {
                 [isStartValid, isTargetValid] = await Promise.all([
-                    // MODIFIED: Pass allowCurseWords here
                     checkWordValidity(s, allowCurseWords),
                     checkWordValidity(t, allowCurseWords)
                 ]);
@@ -511,19 +514,16 @@
             
             setLoading(false);
 
-            // --- Dictionary Validation Feedback (includes Profanity Check feedback) ---
+            // --- Dictionary Validation Feedback ---
             if (!isStartValid || !isTargetValid) {
                 let errorMsg = `[Dictionary Error]: `;
                 
-                // Detailed check for profanity block on start/target words
                 let isStartProfane = !allowCurseWords && PROFANITY_LIST.includes(s);
                 let isTargetProfane = !allowCurseWords && PROFANITY_LIST.includes(t);
 
                 if (isStartProfane || isTargetProfane) {
-                    // FIX: Changed specific profanity message to the generic one requested by the user
                     errorMsg = `[Profanity Block]: Profanity not allowed.`; 
                 } else {
-                    // Fall back to dictionary error if not profane
                     if (!isStartValid && !isTargetValid) {
                         errorMsg += `Neither "${s.toUpperCase()}" nor "${t.toUpperCase()}" are valid words.`;
                     } else if (!isStartValid) {
@@ -534,7 +534,6 @@
                 }
                 
                 setMessage(errorMsg);
-                // Set status to SETUP so the user remains on the setup screen to correct words.
                 setStatus(GAME_STATUS.SETUP); 
                 return;
             }
@@ -544,13 +543,12 @@
             setTargetWord(t);
             setCurrentPath([s]);
             setCurrentEditWord(s);
-            setMessage(`Start your chain! Change a letter in ${s.toUpperCase()} by clicking it.`);
+            setMessage(`Start your chain! Click a letter in ${s.toUpperCase()} to change it.`);
             setStatus(GAME_STATUS.PLAYING);
-        }, [allowCurseWords]); // ADDED allowCurseWords dependency
+        }, [allowCurseWords]); 
 
         const startLevel = (levelKey) => {
             const level = LEVELS[levelKey];
-            // Pick a random pair from the selected level
             const pair = level.pairs[Math.floor(Math.random() * level.pairs.length)];
             resetGame(pair.start, pair.target, level.length, false);
         };
@@ -564,27 +562,22 @@
             setEditingIndex(null);
             setCurrentEditWord('');
             setStatus(GAME_STATUS.MENU);
-            // Ensure keyboard is closed on quit
-            inputRef.current?.blur(); 
         };
 
-        // --- NEW: Undo Last Move Function ---
+        // --- Undo Last Move Function ---
         const undoLastMove = useCallback(() => {
-            // Only allow undo if there's more than the starting word, game is playing, and not loading
             if (currentPath.length > 1 && status === GAME_STATUS.PLAYING && !loading) {
-                const newPath = currentPath.slice(0, -1); // Removes the last element
+                const newPath = currentPath.slice(0, -1); 
                 const newLastWord = newPath[newPath.length - 1];
                 
                 setCurrentPath(newPath);
                 setCurrentEditWord(newLastWord);
                 setEditingIndex(null); // Clear editing state
                 setMessage(`Move undone. Current word is ${newLastWord.toUpperCase()}.`);
-                // Close the keyboard after undo
-                inputRef.current?.blur();
             }
         }, [currentPath, status, loading]);
 
-        // --- Keyboard and Letter Click Logic ---
+        // --- Letter Click Logic (Start/Cancel Editing) ---
 
         const handleLetterClick = useCallback((index) => {
             if (status !== GAME_STATUS.PLAYING || loading) return;
@@ -594,25 +587,70 @@
                 setEditingIndex(null);
                 setMessage('');
                 setCurrentEditWord(lastWord);
-                // FIX 3A: Unfocus the input to dismiss the keyboard
-                inputRef.current?.blur(); 
             } else {
                 // Start editing a new letter
                 setEditingIndex(index);
-                setMessage(`Type the new letter for position ${index + 1}. Press ESC to cancel.`);
-                // FIX 3B: Focus the hidden input to trigger the mobile keyboard
-                inputRef.current?.focus(); 
+                setMessage(`Type the new letter for position ${index + 1}.`);
+                // Use a slight delay to ensure the input is rendered before trying to focus it
+                setTimeout(() => {
+                    tempInputRef.current?.focus(); 
+                }, 50);
             }
         }, [status, loading, editingIndex, lastWord]);
 
-        const handleKeyPress = useCallback((event) => {
-            // Only process key presses if playing, not loading, and a letter is selected for editing
-            if (status !== GAME_STATUS.PLAYING || loading || editingIndex === null) return;
+        // --- NEW: Input Change Handler (Replaces handleKeyPress) ---
+
+        const handleInputChange = useCallback((event) => {
+            // This function is only attached to the temporary input, so we know we are editing
+            const newChar = event.target.value.toLowerCase().slice(-1); // Get the latest character
+
+            if (newChar.match(/^[a-z]$/) && newChar.length === 1) {
+                
+                const newWord = lastWord.split(''); 
+                
+                if (newWord[editingIndex] === newChar) {
+                    setMessage('You must change the letter at the selected position.');
+                    // Clear the input value to prevent it from holding the same character
+                    event.target.value = ''; 
+                    return;
+                }
+                
+                newWord[editingIndex] = newChar;
+                const potentialWord = newWord.join('');
+                
+                // Immediately update the visual preview of the word
+                setCurrentEditWord(potentialWord);
+                
+                // Submit the move
+                submitWord(potentialWord);
+                
+                // Reset the input value so the next input starts fresh
+                event.target.value = '';
+                
+            } else {
+                // Clear the input value if the typed character was not a letter
+                event.target.value = ''; 
+            }
+
+            // Immediately unfocus the input to dismiss the keyboard after a character is processed
+            tempInputRef.current?.blur();
+
+        }, [editingIndex, lastWord, submitWord]);
+        
+        // --- NEW: Global Keydown Listener for Desktop/Escape ---
+        // This is re-introduced specifically for desktop (physical keyboard) ESC functionality.
+
+        const handleGlobalKeyPress = useCallback((event) => {
+            if (status !== GAME_STATUS.PLAYING || loading) return;
 
             const key = event.key.toLowerCase();
             
-            if (key.match(/^[a-z]$/) && key.length === 1) {
-                event.preventDefault();
+            // Allow physical key press for typing if editingIndex is active
+            if (key.match(/^[a-z]$/) && key.length === 1 && editingIndex !== null) {
+                // For desktop, we will manually route the key press here
+                // Note: For mobile, the virtual keyboard will update the value of the focused input, triggering handleInputChange.
+                
+                event.preventDefault(); // Prevent default action (like form submission, etc.)
 
                 const newWord = lastWord.split(''); // Start from the last *valid* word
                 
@@ -632,32 +670,27 @@
                 
                 // Clear the editing focus right away
                 setEditingIndex(null);
-
+                
             } else if (key === 'escape') {
                 event.preventDefault();
-                // Escape key cancels editing
                 setEditingIndex(null);
                 setMessage('Editing canceled.');
                 setCurrentEditWord(lastWord);
-                // Ensure keyboard is dismissed on cancel
-                inputRef.current?.blur(); 
             }
         }, [status, loading, editingIndex, lastWord, submitWord]);
 
-        // FIX 2: REMOVED the global keydown listener (window.addEventListener('keydown', handleKeyPress))
-        /*
         useEffect(() => {
             // Set up and tear down the global keydown listener
-            window.addEventListener('keydown', handleKeyPress);
+            window.addEventListener('keydown', handleGlobalKeyPress);
             return () => {
-                window.removeEventListener('keydown', handleKeyPress);
+                window.removeEventListener('keydown', handleGlobalKeyPress);
             };
-        }, [handleKeyPress]);
-        */
+        }, [handleGlobalKeyPress]); // Dependency array ensures it updates when handlers change
 
 
-        // --- UI COMPONENTS ---
-
+        // --- UI COMPONENTS (Unchanged for brevity) ---
+        // ... [MessageDisplay, LevelSelector, CustomWordSetup, WordTile, WordPathDisplay code remains the same] ...
+        
         const MessageDisplay = () => {
             let currentMessage = message;
             let icon = null;
@@ -751,21 +784,16 @@
         );
 
         const CustomWordSetup = () => {
-            // Initial state for custom words
             const initialLength = 4;
-            // Use placeholder words that are valid for the initial length
             const [customStart, setCustomStart] = useState('word'); 
             const [customTarget, setCustomTarget] = useState('game');
             const [customLength, setCustomLength] = useState(initialLength);
-            // Custom setup should be collapsed by default on MENU, but open if validation failed (SETUP status)
             const [showInput, setShowInput] = useState(status === GAME_STATUS.SETUP);
             
-            // Generate list of lengths (3, 4, 5, 6), ensuring 6 is an option
             const lengthOptions = Object.values(LEVELS).map(l => l.length);
             if (!lengthOptions.includes(6)) lengthOptions.push(6);
-            lengthOptions.sort((a, b) => a - b); // Ensure 3, 4, 5, 6 order
+            lengthOptions.sort((a, b) => a - b); 
 
-            // Auto-truncate/update words when length changes
             useEffect(() => {
                 const s = customStart.toLowerCase().trim().slice(0, customLength);
                 const t = customTarget.toLowerCase().trim().slice(0, customLength);
@@ -773,7 +801,6 @@
                 setCustomTarget(t);
             }, [customLength]);
 
-            // If we are in SETUP status (meaning a validation error occurred), open the panel
             useEffect(() => {
                 if (status === GAME_STATUS.SETUP) {
                     setShowInput(true);
@@ -782,7 +809,6 @@
 
 
             const handleCustomStart = () => {
-                // Pass current state values to resetGame, which handles all validation
                 resetGame(customStart, customTarget, customLength, true);
             };
 
@@ -812,7 +838,6 @@
                                     value={customLength} 
                                     onChange={(e) => {
                                         setCustomLength(parseInt(e.target.value));
-                                        // Clear any previous error message when changing length
                                         setMessage('');
                                     }}
                                     className="p-2 rounded-lg bg-gray-600 text-white focus:ring-2 focus:ring-purple-400 border border-transparent transition cursor-pointer"
@@ -870,8 +895,6 @@
             const isStartWord = pathIndex === 0;
             const isTargetWord = word === targetWord;
             
-            // If it's the last word in the chain, use the word being edited (currentEditWord) for display,
-            // otherwise use the established word (word).
             const displayWord = isLastWord ? currentEditWord : word;
             const letters = displayWord.split('');
             const isActive = isLastWord && status === GAME_STATUS.PLAYING && !loading;
@@ -885,7 +908,7 @@
             // Non-active words are shown simply
             if (!isActive) {
                 return (
-                    <div className={`p-3 rounded-xl shadow-lg font-mono-game text-xl uppercase transition-all duration-300 transform ${baseColor}`}>
+                    <div className="p-3 rounded-xl shadow-lg font-mono-game text-xl uppercase transition-all duration-300 transform bg-gray-700/50 text-gray-200">
                         {word}
                     </div>
                 );
@@ -900,9 +923,10 @@
                         ${isActive ? 'bg-gray-700 ring-4 ring-yellow-500/80' : 'bg-gray-800'}`}
                 >
                     {letters.map((char, charIndex) => (
-                        <div
-                            key={charIndex}
-                            className={`flex items-center justify-center m-1 rounded-lg font-extrabold cursor-pointer transition-all duration-150 
+                        // WRAPPER DIV for positioning the temporary input
+                        <div 
+                            key={charIndex} 
+                            className={`relative flex items-center justify-center m-1 rounded-lg font-extrabold cursor-pointer transition-all duration-150 
                                 ${letterSizeClass}
                                 ${editingIndex === charIndex 
                                     ? 'bg-red-500 text-white shadow-inner ring-2 ring-red-300' // Editing state
@@ -915,6 +939,34 @@
                             onClick={() => isActive && handleLetterClick(charIndex)}
                         >
                             {char}
+                            
+                            {/* NEW: Temporary Input Overlay */}
+                            {editingIndex === charIndex && (
+                                <input
+                                    ref={tempInputRef}
+                                    type="text"
+                                    // Make it cover the letter box and be focused
+                                    className="absolute inset-0 w-full h-full text-4xl text-transparent bg-transparent border-0 focus:ring-0 text-center font-mono-game cursor-pointer mobile-input"
+                                    style={{
+                                        // Mobile hack: sometimes larger font helps trigger the keyboard
+                                        fontSize: '2rem', 
+                                    }}
+                                    // Use a temporary value to force focus on re-render (will be cleared immediately)
+                                    value=""
+                                    onChange={handleInputChange} 
+                                    onBlur={() => {
+                                        // If the user taps away, cancel editing
+                                        setEditingIndex(null); 
+                                        setCurrentEditWord(lastWord);
+                                    }}
+                                    maxLength="1"
+                                    autoFocus // Attempt to auto-focus on creation
+                                    autoCorrect="off"
+                                    autoCapitalize="none"
+                                    spellCheck="false"
+                                />
+                            )}
+                            
                             {/* Flashing cursor effect on active editing letter */}
                             {editingIndex === charIndex && <div className="absolute w-1 h-3 bg-white animate-pulse" style={{ animationDuration: '0.8s' }}></div>}
                         </div>
@@ -924,10 +976,8 @@
         };
         
         const WordPathDisplay = () => {
-            // FIX: Ref for auto-scrolling
             const scrollRef = useRef(null); 
 
-            // FIX: Auto-scroll effect
             useEffect(() => {
                 if (scrollRef.current) {
                     scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -937,7 +987,6 @@
             return (
                 <div className="p-6 bg-gray-800/80 rounded-xl shadow-inner space-y-4">
                     <h2 className="text-2xl font-bold text-gray-200">Your Chain</h2>
-                    {/* FIX: Set max-height to 200px (scroll after 3 words) and attach ref. Added pr-2 for scrollbar. */}
                     <div 
                         ref={scrollRef}
                         className="flex flex-col space-y-3 pr-2" 
@@ -946,10 +995,7 @@
                         {currentPath.map((word, index) => {
                             return (
                                 <div key={index} className="flex items-center">
-                                    {/* Step count display */}
                                     <div className="min-w-10 text-center font-bold text-lg text-gray-400 pr-4">{index + 1}.</div>
-                                    {/* The word tile itself */}
-                                    {/* FIX: Added my-1 wrapper to prevent outline cut-off */}
                                     <div className="my-1">
                                         <WordTile word={word} pathIndex={index} />
                                     </div>
@@ -964,7 +1010,6 @@
         // --- Main Render Logic ---
         
         const renderGameContent = () => {
-            // Only render the full game board if we are actively playing or have won.
             if (status === GAME_STATUS.PLAYING || status === GAME_STATUS.WON) {
                 
                 const isUndoDisabled = currentPath.length <= 1 || loading;
@@ -1028,7 +1073,6 @@
             }
 
             // Status is MENU or SETUP (failed validation or initializing Custom Level)
-            // Render the LevelSelector, which contains the CustomWordSetup component.
             return <LevelSelector />;
         };
         
@@ -1053,22 +1097,7 @@
                     
                     {renderGameContent()}
                     
-                    {/* FIX 4: ADD THE HIDDEN INPUT FIELD HERE */}
-                    {/* This field receives focus on letter click to force the mobile keyboard open and capture key events. */}
-                    <input
-                        ref={inputRef}
-                        type="text"
-                        // Tailwind classes to hide the input but keep it interactive
-                        className="absolute w-1 h-1 opacity-0 overflow-hidden p-0 m-0 border-0" 
-                        onKeyDown={handleKeyPress}
-                        // Important attributes for mobile compatibility
-                        autoCorrect="off"
-                        autoCapitalize="none"
-                        spellCheck="false"
-                        // Prevent the input from capturing multiple characters at once
-                        maxLength="1"
-                        aria-hidden="true" 
-                    />
+                    {/* The temporary input is now INSIDE the WordTile, where it is focused */}
 
 
                     {/* NEW: Settings Modal */}
@@ -1089,7 +1118,6 @@
                             chain={currentPath}
                             steps={currentPath.length - 1}
                             onNewGame={quitGame}
-                            // Note: resetGame needs startWord, targetWord, wordLength, and isCustom=false
                             onReplay={() => resetGame(startWord, targetWord, wordLength, false)}
                             startWord={startWord}
                             targetWord={targetWord}
