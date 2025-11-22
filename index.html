@@ -17,13 +17,7 @@
         /* Custom font for words to give it a game feel */
         .font-mono-game {
             font-family: 'Space Mono', monospace;
-        }
-        /* Ensure the input is hidden but focusable */
-        .mobile-input {
-            position: absolute;
-            opacity: 0;
-            z-index: -10;
-        }
+        }        
 		/* Custom Scrollbar Styles for Theme Consistency */
         .custom-scrollbar::-webkit-scrollbar {
             height: 8px; /* Height for horizontal scrollbar */
@@ -482,7 +476,6 @@
         const [editingIndex, setEditingIndex] = useState(null); // Index of the letter being edited
         const [currentEditWord, setCurrentEditWord] = useState(''); // The word being typed/previewed before submission
         
-        const tempInputRef = useRef(null); 
         const pathContainerRef = useRef(null); 
         
         const lastWord = useMemo(() => currentPath[currentPath.length - 1], [currentPath]);
@@ -627,21 +620,17 @@
         // --- Letter Click Logic (Start/Cancel Editing) ---
 
         const handleLetterClick = useCallback((index) => {
-            if (status !== GAME_STATUS.PLAYING || loading) return;
+        if (status !== GAME_STATUS.PLAYING || loading) return;
 
-            if (editingIndex === index) {
-                setEditingIndex(null);
-                setMessage('Tap a letter to begin typing.');
-                setCurrentEditWord(lastWord);
-                tempInputRef.current?.blur(); 
-            } else {
-                setEditingIndex(index);
-                setMessage(`Enter the new letter for position ${index + 1}.`);
-                setTimeout(() => {
-                    tempInputRef.current?.focus(); 
-                }, 50);
-            }
-        }, [status, loading, editingIndex, lastWord]);
+        if (editingIndex === index) {
+            setEditingIndex(null);
+            setMessage('Tap a letter to begin typing.');
+            setCurrentEditWord(lastWord);
+        } else {
+            setEditingIndex(index);
+            setMessage(`Enter the new letter for position ${index + 1}.`);
+        }
+    }, [status, loading, editingIndex, lastWord]);
 
         // --- Input Change Handler ---
 
@@ -918,23 +907,7 @@
                             {char}
                             
                             {/* Temporary Input Overlay */}
-                            {editingIndex === charIndex && (
-                                <input
-                                    ref={tempInputRef}
-                                    type="text"
-                                    className="absolute inset-0 w-full h-full text-4xl text-transparent bg-transparent border-0 focus:ring-0 text-center font-mono-game cursor-pointer mobile-input"
-                                    style={{
-                                        fontSize: '2rem', 
-                                    }}
-                                    value=""
-                                    onChange={handleInputChange} 
-                                    maxLength="1"
-                                    autoFocus 
-                                    autoCorrect="off"
-                                    autoCapitalize="none"
-                                    spellCheck="false"
-                                />
-                            )}
+                           
                         </div>
                     ))}
                 </div>
@@ -1144,7 +1117,7 @@ const WordPathDisplay = () => {
                 <div className="w-full max-w-4xl space-y-8">
                     {/* Title and Header - SUBTITLE REMOVED WHEN PLAYING/WON */}
                     <header className="text-center space-y-2 mb-12">
-                        <h1 className="text-5xl font-extrabold tracking-wide text-gray-200">
+                        <h1 className="text-4xl font-extrabold tracking-wide text-gray-200">
                             The <span className="text-teal-400">Word</span><br className="sm:hidden" /> Ladder Game
                         </h1>
                         {/* The subtitle is now only shown in the initial menu/setup screen. */}
