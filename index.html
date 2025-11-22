@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Word Ladder Game - Levels</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
         /* Use Inter and Space Mono for a clean, modern, and code-like look */
@@ -24,6 +24,24 @@
             opacity: 0;
             z-index: -10;
         }
+		/* Custom Scrollbar Styles for Theme Consistency */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 8px; /* Height for horizontal scrollbar */
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #2D3748; /* Dark Gray (match background or track color) */
+            border-radius: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #4A5568; /* Slightly lighter gray for the thumb */
+            border-radius: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #38B2AC; /* Teal color on hover */
+        }
     </style>
 </head>
 <body class="bg-gray-900">
@@ -37,19 +55,22 @@
 
     // --- ICON Definitions ---
     const Icons = {
-		RefreshCw: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.651 7.65a7.131 7.131 0 0 0-12.68 3.15M18.001 4v4h-4m-7.652 8.35a7.13 7.13 0 0 0 12.68-3.15M6 20v-4h4"/></svg>,        CheckCircle: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M9 11l3 3L22 4"/></svg>,
+		RefreshCw: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.651 7.65a7.131 7.131 0 0 0-12.68 3.15M18.001 4v4h-4m-7.652 8.35a7.13 7.13 0 0 0 12.68-3.15M6 20v-4h4"/></svg>,        
+        CheckCircle: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M9 11l3 3L22 4"/></svg>,
         XCircle: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6"/><path d="M9 9l6 6"/></svg>,
         ChevronRight: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>,
         Hash: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>,
         BookOpen: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>,
         Loader: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a10 10 0 1 0 5.4 18.5"/><path d="M12 2v2"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M17.4 6.6l-1.4 1.4"/><path d="M6.6 17.4l-1.4 1.4"/></svg>,
         Zap: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
-		Trophy: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z"/><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 13c0 2.038-2.239 4.5-5 4.5S7 15.038 7 13c0 1.444 10 1.444 10 0Z"/><path fill="currentColor" d="m9 6.811.618 1.253 1.382.2-1 .975.236 1.377L9 9.966l-1.236.65L8 9.239l-1-.975 1.382-.2L9 6.811Zm6 0 .618 1.253 1.382.2-1 .975.236 1.377L15 9.966l-1.236.65L14 9.239l-1-.975 1.382-.2L15 6.811Z"/><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" d="m9 6.811.618 1.253 1.382.2-1 .975.236 1.377L9 9.966l-1.236.65L8 9.239l-1-.975 1.382-.2L9 6.811Zm6 0 .618 1.253 1.382.2-1 .975.236 1.377L15 9.966l-1.236.65L14 9.239l-1-.975 1.382-.2L15 6.811Z"/></svg>,        LogOut: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>,
-		RotateCcw: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9h13a5 5 0 0 1 0 10H7M3 9l4-4M3 9l4 4"/></svg>,        HelpCircle: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>,
+		Trophy: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z"/><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 13c0 2.038-2.239 4.5-5 4.5S7 15.038 7 13c0 1.444 10 1.444 10 0Z"/><path fill="currentColor" d="m9 6.811.618 1.253 1.382.2-1 .975.236 1.377L9 9.966l-1.236.65L8 9.239l-1-.975 1.382-.2L9 6.811Zm6 0 .618 1.253 1.382.2-1 .975.236 1.377L15 9.966l-1.236.65L14 9.239l-1-.975 1.382-.2L15 6.811Z"/><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" d="m9 6.811.618 1.253 1.382.2-1 .975.236 1.377L9 9.966l-1.236.65L8 9.239l-1-.975 1.382-.2L9 6.811Zm6 0 .618 1.253 1.382.2-1 .975.236 1.377L15 9.966l-1.236.65L14 9.239l-1-.975 1.382-.2L15 6.811Z"/></svg>,        
+        LogOut: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>,
+		RotateCcw: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9h13a5 5 0 0 1 0 10H7M3 9l4-4M3 9l4 4"/></svg>,        
+        HelpCircle: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>,
 		Settings: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeLinecap="square" strokeLinejoin="round" strokeWidth="2" d="M10 19H5a1 1 0 0 1-1-1v-1a3 3 0 0 1 3-3h2m10 1a3 3 0 0 1-3 3m3-3a3 3 0 0 0-3-3m3 3h1m-4 3a3 3 0 0 1-3-3m3 3v1m-3-4a3 3 0 0 1 3-3m-3 3h-1m4-3v-1m-2.121 1.879-.707-.707m5.656 5.656-.707-.707m-4.242 0-.707.707m5.656-5.656-.707.707M12 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>,
 		};
 
-    // --- LEVEL CONFIGURATION ---
+    // --- LEVEL CONFIGURATION (Used by LevelSelector) ---
     const LEVELS = {
         EASY: { 
             name: '3-Letter Warmup', 
@@ -105,7 +126,6 @@
     };
 
     // --- BASIC HARDCODED PROFANITY LIST for demonstration ---
-    // Used only if allowCurseWords is false. This list is illustrative, not exhaustive.
     const PROFANITY_LIST = [
         'shit', 'fuck', 'ass', 'bitch', 'cunt', 'piss', 'nigga', 'boob',
         'wank', 'dick', 'crap', 'pube', 'slut', 'tits', 'cock', 'boobs'
@@ -122,23 +142,17 @@
 
     /**
      * Checks word validity using the Dictionary API and an internal profanity filter.
-     * @param {string} word - The word to check.
-     * @param {boolean} allowCurseWords - If true, profanity check is skipped.
-     * @param {number} retries - Internal retry counter for API.
      */
     const checkWordValidity = async (word, allowCurseWords, retries = 0) => {
         const cleanedWord = word.trim().toLowerCase();
         if (cleanedWord === '') return false;
 
         // --- PROFANITY CHECK ---
-        if (!allowCurseWords) {
-            if (PROFANITY_LIST.includes(cleanedWord)) {
-                return false; // Invalidated due to profanity
-            }
+        if (!allowCurseWords && PROFANITY_LIST.includes(cleanedWord)) {
+            return false; // Invalidated due to profanity
         }
         // --- END PROFANITY CHECK ---
 		
-        // NEW LOCAL CHECK: Bypass API if word is in the local whitelist
         if (LOCAL_WORD_WHITELIST.includes(cleanedWord)) {
             return true;
         }
@@ -149,7 +163,6 @@
             
             if (response.ok) {
                 const data = await response.json();
-                // API returns an array of definitions if valid, or a JSON object with a title 'No Definitions Found' if invalid
                 return Array.isArray(data);
             } else if (response.status === 404) {
                 return false;
@@ -160,11 +173,9 @@
             if (retries < MAX_RETRIES) {
                 const delay = Math.pow(2, retries) * 1000;
                 await new Promise(resolve => setTimeout(resolve, delay));
-                // Must pass allowCurseWords on retry
                 return checkWordValidity(word, allowCurseWords, retries + 1); 
             }
             console.error(`Failed to check word validity for "${word}" after ${MAX_RETRIES} retries:`, error);
-            // Default to invalid if API consistently fails
             return false; 
         }
     };
@@ -183,83 +194,161 @@
         return diffCount === 1;
     };
 
-    // --- HELP MODAL COMPONENT (Updated with CAT->COT example and current instructions) ---
-
+    // --- MODAL Components (Settings, Help, Win) ---
+    
     // --- HELP MODAL COMPONENT ---
-
+    // --- HELP MODAL COMPONENT (REVISED FOR COMPACT LAYOUT AND CORRECT JSX) ---
     const HelpModal = ({ onClose }) => {
-        // The user's requested rules in the new order, with the trimmed first line
+        // Data Setup (Rules 2, 3, 4 only)
         const rules = [
-            "Transform the Start Word (CAT) into the Goal Word (DOG).",
-            "You must change only one letter from the previous word to form the next one.",
-            "Each word in the chain must be a valid English word.",
-            "You cannot reuse a word already in your chain.",
+            "You can change only one letter from the current word to form the next one.", 
+            "Each word in the chain must be a valid English word.", 
+            "You cannot reuse a word already in your chain."
         ];
 
-        // Example words for the visual chain display
-        const exampleChain = [
-            { word: "CAT", color: "bg-purple-600" }, // Start Word style
-            { word: "COT", color: "bg-gray-600" },
-            { word: "COG", color: "bg-gray-600" },
-            { word: "DOG", color: "bg-green-600" }, // Goal Word style
+        // Visual examples for the rules (small size)
+        const oneLetterDiffExample = [{ word: "CAT", valid: true, color: 'bg-purple-600' }, { word: "COT", valid: true, color: 'bg-gray-600' }];
+        const invalidWordExample = [
+            { chain: [{ word: "COT", valid: true, color: 'bg-gray-600' }, { word: "COG", valid: true, color: 'bg-gray-600' }], type: "valid" },
+            { chain: [{ word: "COT", valid: true, color: 'bg-gray-600' }, { word: "CPG", valid: false, color: 'bg-gray-500' }], type: "invalid" }
         ];
+        const reuseWordExample = [{ word: "COT", valid: true, color: 'bg-gray-600' }, { word: "COG", valid: true, color: 'bg-gray-600' }, { word: "COT", valid: false, color: 'bg-gray-500' }];
+
+        // The solution chain for the final example (consistent small size)
+        const solutionChain = [
+            { word: "CAT", color: "bg-purple-600" }, 
+            { word: "COT", color: "bg-gray-600" }, 
+            { word: "COG", color: "bg-gray-600" }, 
+            { word: "DOG", color: "bg-green-600" }
+        ];
+
+        // Component to render a word block for rules (small size)
+        const WordBlock = ({ word, color, valid }) => (
+             <span className={`px-2 py-0.5 rounded-md font-mono-game text-sm font-bold uppercase ${color} text-white ${!valid ? 'opacity-70' : ''}`}>
+                 {word}
+             </span>
+        );
+        
+        // Component to render the shared yellow-bordered container
+        const ExampleContainer = ({ children }) => (
+            // Reduced padding, margin-top, and removed space-y-3
+            <div className="p-2 bg-gray-800 rounded-lg shadow-inner border border-yellow-500/80 mt-1"> 
+                {children}
+            </div>
+        );
+
 
         return (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-70 backdrop-blur-sm" onClick={onClose}>
+            <div 
+                className="fixed inset-0 z-50 flex items-center justify-center p-2 bg-black bg-opacity-70 backdrop-blur-sm" 
+                onClick={onClose}
+            >
                 <div 
-                    className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-gray-800 rounded-xl shadow-2xl p-6 md:p-8 space-y-6 transform transition-all"
-                    onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
+                    // Set max-h to a percentage that should fit most screens without scroll
+                    className="w-full max-w-xl max-h-[85vh] overflow-y-auto bg-gray-800 rounded-xl shadow-2xl p-4 space-y-4 transform transition-all" 
+                    onClick={(e) => e.stopPropagation()} 
                 >
-                    <div className="flex justify-between items-center border-b border-purple-500/50 pb-3">
-                        <h2 className="text-3xl font-extrabold text-purple-400 flex items-center">
-                            <Icons.HelpCircle className="mr-3" size={30} /> How To Play
+                    <div className="flex justify-between items-center border-b border-purple-500/50 pb-2 mb-2">
+                        <h2 className="text-2xl font-extrabold text-purple-400 flex items-center">
+                            <Icons.HelpCircle className="mr-2" size={24} /> How To Play
                         </h2>
-                        <button onClick={onClose} className="p-2 text-gray-400 hover:text-white transition-colors">
-                            <Icons.XCircle size={28} />
+                        <button onClick={onClose} className="p-1 text-gray-400 hover:text-white transition-colors">
+                            <Icons.XCircle size={24} />
                         </button>
                     </div>
 
-                    <div className="space-y-6">
-                        {/* Rules List */}
-                        <div className="p-4 bg-gray-700/50 rounded-lg border-l-4 border-purple-500 shadow-md">
-                            <ul className="list-disc list-inside text-gray-300 space-y-3 pl-4">
-                                {rules.map((rule, index) => (
-                                    <li key={index} className="text-lg font-medium">
-                                        {index === 0 ? (
-                                            <>
-                                                Transform the <strong className="text-purple-400">Start Word (CAT)</strong> into the <strong className="text-green-400">Goal Word (DOG)</strong>.
-                                            </>
-                                        ) : rule}
-                                    </li>
-                                ))}
+                    <div className="space-y-4"> 
+                        <div className="p-3 bg-gray-700/60 rounded-lg border-l-4 border-purple-500 shadow-md">
+                            
+                            {/* INTRODUCTORY PARAGRAPH (REPLACING THE FIRST RULE) */}
+                            <p className="text-lg font-bold text-gray-100 mb-3 flex flex-wrap items-center leading-snug">
+                                To transform the <strong className="text-purple-400 mx-1">Start Word</strong>
+                                <span className="inline-block px-1.5 py-0.5 rounded-md font-mono-game text-base font-bold uppercase bg-purple-600 text-white shadow-md mx-0.5">
+                                    CAT
+                                </span>
+                                into the <strong className="text-green-400 mx-1">Goal Word</strong>
+                                <span className="inline-block px-1.5 py-0.5 rounded-md font-mono-game text-base font-bold uppercase bg-green-600 text-white shadow-md mx-0.5">
+                                    DOG
+                                </span>
+                                you must follow these rules:
+                            </p>
+
+                            <ul className="list-disc list-inside text-gray-300 space-y-3 pl-2 pt-3 border-t border-gray-700/50">
+                                
+                                {/* Rule 1 (was Rule 2): One Letter Difference */}
+                                <li className="text-base font-medium leading-tight">
+                                    {rules[0]}
+                                    <ExampleContainer>
+                                        <div className="flex items-center gap-1">
+                                            {oneLetterDiffExample.map((item, idx) => (
+                                                <React.Fragment key={idx}>
+                                                    <WordBlock word={item.word} color={item.color} valid={item.valid} />
+                                                    {idx < oneLetterDiffExample.length - 1 && <span className="text-gray-400 text-base">&rarr;</span>}
+                                                </React.Fragment>
+                                            ))}
+                                        </div>
+                                    </ExampleContainer>
+                                </li>
+
+                                {/* Rule 2 (was Rule 3): Valid English Word (Fixed JSX structure) */}
+                                <li className="text-base font-medium leading-tight">
+                                    {rules[1]}
+                                    <ExampleContainer>
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            {invalidWordExample.map((example, exIdx) => (
+                                                <div key={exIdx} className="flex items-center gap-1">
+                                                    {example.chain.map((item, idx) => (
+                                                        <React.Fragment key={idx}>
+                                                            <WordBlock word={item.word} color={item.color} valid={item.valid} />
+                                                            {idx < example.chain.length - 1 && <span className="text-gray-400 text-base">&rarr;</span>}
+                                                        </React.Fragment>
+                                                    ))}
+                                                    {/* The JSX below is correctly wrapped in a Fragment if needed, or is a single component */}
+                                                    {example.type === "valid" ? (
+                                                        <Icons.CheckCircle size={20} className="text-green-500" /> 
+                                                    ) : (
+                                                        <Icons.XCircle size={20} className="text-red-500" />
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </ExampleContainer>
+                                </li>
+                                
+                                {/* Rule 3 (was Rule 4): Cannot Reuse Word */}
+                                <li className="text-base font-medium leading-tight">
+                                    {rules[2]}
+                                    <ExampleContainer>
+                                        <div className="flex items-center gap-1">
+                                            {reuseWordExample.map((item, idx) => (
+                                                <React.Fragment key={idx}>
+                                                    <WordBlock word={item.word} color={item.color} valid={item.valid} />
+                                                    {idx < reuseWordExample.length - 1 && <span className="text-gray-400 text-base">&rarr;</span>}
+                                                </React.Fragment>
+                                            ))}
+                                            <Icons.XCircle size={20} className="text-red-500" />
+                                        </div>
+                                    </ExampleContainer>
+                                </li>
+                                
+                                {/* Solution/Example */}
+                                <li className="text-base font-medium mt-4 pt-3 border-t border-gray-700">
+                                    A possible <strong className="text-yellow-400">Solution</strong> for CAT to DOG:
+                                    <ExampleContainer>
+                                        <div className="flex flex-wrap justify-center sm:justify-start gap-1">
+                                            {solutionChain.map((item, index) => (
+                                                <React.Fragment key={index}>
+                                                    <WordBlock word={item.word} color={item.color} valid={true} /> 
+                                                    {index < solutionChain.length - 1 && (
+                                                        <span className="flex items-center text-gray-400 text-base">&rarr;</span>
+                                                    )}
+                                                </React.Fragment>
+                                            ))}
+                                        </div>
+                                    </ExampleContainer>
+                                </li>
                             </ul>
                         </div>
-                        
-                        {/* Example with horizontal tiles */}
-                        <div className="p-4 bg-gray-700/50 rounded-lg border-l-4 border-yellow-500 shadow-md">
-                            <h3 className="text-xl font-bold text-gray-100 mb-3">Example</h3>
-                            <div className="flex flex-wrap justify-center sm:justify-start gap-2 p-3 bg-gray-800 rounded border border-yellow-500/50">
-                                {exampleChain.map((item, index) => (
-                                    <React.Fragment key={index}>
-                                        <span className={`px-4 py-2 rounded-lg font-mono-game text-xl font-bold uppercase ${item.color} text-white shadow-md`}>
-                                            {item.word}
-                                        </span>
-                                        {index < exampleChain.length - 1 && (
-                                            <span className="flex items-center text-gray-400 text-3xl">&rarr;</span>
-                                        )}
-                                    </React.Fragment>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="pt-4 border-t border-gray-700">
-                        <button
-                            onClick={onClose}
-                            className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-lg transition-transform duration-200"
-                        >
-                            Got It
-                        </button>
                     </div>
                 </div>
             </div>
@@ -267,13 +356,12 @@
     };
 
     // --- SETTINGS MODAL COMPONENT ---
-
     const SettingsModal = ({ onClose, allowCurseWords, setAllowCurseWords }) => {
         return (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-70 backdrop-blur-sm" onClick={onClose}>
                 <div 
                     className="w-full max-w-md max-h-[90vh] overflow-y-auto bg-gray-800 rounded-xl shadow-2xl p-6 md:p-8 space-y-6 transform transition-all"
-                    onClick={(e) => e.stopPropagation()} // Prevent closing
+                    onClick={(e) => e.stopPropagation()} 
                 >
                     <div className="flex justify-between items-center border-b border-purple-500/50 pb-3">
                         <h2 className="text-3xl font-extrabold text-purple-400 flex items-center">
@@ -290,7 +378,6 @@
                                 <h3 className="text-xl font-bold text-gray-100">Allow Profanity</h3>
                                 <p className="text-sm text-gray-300">Allow potentially offensive or sensitive words.</p>
                             </div>
-                            {/* Toggle Switch */}
                             <button
                                 onClick={() => setAllowCurseWords(prev => !prev)}
                                 className={`relative inline-flex items-center h-8 w-14 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${allowCurseWords ? 'bg-green-600' : 'bg-gray-600'}`}
@@ -317,7 +404,6 @@
     };
 
     // --- WIN MODAL COMPONENT ---
-
     const WinModal = ({ chain, steps, onNewGame, onReplay, startWord, targetWord }) => {
         return (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80 backdrop-blur-sm">
@@ -330,13 +416,12 @@
                             CONGRATULATIONS!
                         </h2>
                         <p className="text-2xl font-semibold text-gray-200">
-                            You solved the chain in <span className="text-yellow-400">{steps}</span> steps!
+                            You solved the puzzle in <span className="text-yellow-400">{steps}</span> steps!
                         </p>
                     </div>
 
                     <div className="space-y-3">
                         <h3 className="text-xl font-bold text-gray-300 border-b border-gray-700 pb-2">Your Winning Chain:</h3>
-                        {/* Horizontal display of the full word chain - ONLY SHOWN HERE */}
                         <div className="flex flex-wrap justify-center gap-2 max-h-[200px] overflow-y-auto p-2 border border-gray-700 rounded-lg bg-gray-900/50">
                             {chain.map((word, index) => (
                                 <div 
@@ -348,7 +433,6 @@
                                         }`}
                                 >
                                     {word}
-                                    {/* Arrow separator (skip after the last word) */}
                                     {index < chain.length - 1 && (
                                         <span className="ml-2 text-gray-400">→</span>
                                     )}
@@ -358,7 +442,6 @@
                     </div>
 
                     <div className="pt-4 border-t border-gray-700 flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
-                        {/* New Game Button */}
                         <button
                             onClick={onNewGame}
                             className="flex-1 px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-extrabold rounded-full shadow-lg transition-transform duration-300 transform hover:scale-[1.05] active:scale-95 flex items-center justify-center"
@@ -366,7 +449,6 @@
                             <Icons.BookOpen size={20} className="mr-2" /> New Game
                         </button>
                         
-                        {/* Replay Button */}
                         <button
                             onClick={onReplay}
                             className="flex-1 px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-extrabold rounded-full shadow-lg transition-transform duration-300 transform hover:scale-[1.05] active:scale-95 flex items-center justify-center"
@@ -400,15 +482,11 @@
         const [editingIndex, setEditingIndex] = useState(null); // Index of the letter being edited
         const [currentEditWord, setCurrentEditWord] = useState(''); // The word being typed/previewed before submission
         
-        // NEW: Ref for the temporary input box for easier focus management
         const tempInputRef = useRef(null); 
-        // 🚨 NEW LINE: Ref for the entire word chain container (for click-away logic)
         const pathContainerRef = useRef(null); 
         
-        // Memoize the last word in the successful chain
         const lastWord = useMemo(() => currentPath[currentPath.length - 1], [currentPath]);
 
-        // Update the word being edited whenever the last successful word changes
         useEffect(() => {
             setCurrentEditWord(lastWord || '');
         }, [lastWord]);
@@ -424,10 +502,8 @@
             setMessage('');
             setLoading(true);
             
-            // Clear editing state after submission attempt
             setEditingIndex(null);
 
-            // 1. Check for length/format 
             if (submittedWord.length !== wordLength) {
                 setMessage(`Word must be exactly ${wordLength} letters long.`);
                 setLoading(false);
@@ -435,23 +511,20 @@
                 return;
             }
 
-            // Rule 2: Must be one letter different
             if (!isOneLetterDifference(lastWord, submittedWord)) {
                 setMessage(`The new word "${submittedWord.toUpperCase()}" must differ by only one letter from "${lastWord.toUpperCase()}".`);
                 setLoading(false);
-                setCurrentEditWord(lastWord); // Revert back to the last valid word
+                setCurrentEditWord(lastWord); 
                 return;
             }
             
-            // Rule 3: Cannot be an old word in the path
             if (currentPath.includes(submittedWord)) {
                 setMessage(`"${submittedWord.toUpperCase()}" is already in your chain. Try a new word.`);
                 setLoading(false);
-                setCurrentEditWord(lastWord); // Revert back
+                setCurrentEditWord(lastWord); 
                 return;
             }
             
-            // API Check (includes profanity check)
             setMessage(`Checking "${submittedWord.toUpperCase()}" in the live dictionary...`);
             const isValid = await checkWordValidity(submittedWord, allowCurseWords);
             setLoading(false);
@@ -459,14 +532,14 @@
             if (!isValid) {
                 let failMessage = `"${submittedWord.toUpperCase()}" is not recognized as a valid word. Try again.`;
                 if (!allowCurseWords && PROFANITY_LIST.includes(submittedWord)) {
-                    failMessage = `Profanity not allowed.`; 
+                    // Added a tag to easily identify profanity blocks in MessageDisplay
+                    failMessage = `[Profanity Block] Profanity not allowed.`; 
                 }
                 setMessage(failMessage);
-                setCurrentEditWord(lastWord); // Revert back
+                setCurrentEditWord(lastWord); 
                 return;
             }
 
-            // Valid move
             const newPath = [...currentPath, submittedWord];
             setCurrentPath(newPath);
             
@@ -493,81 +566,38 @@
             // --- Word Length Validation ---
             if (s.length !== length || t.length !== length || s.length === 0) {
                 const source = isCustom ? 'custom setup' : 'level configuration';
+                // Added tag for validation errors
                 setMessage(`[Validation Error from ${source.toUpperCase()}]: Both words must be exactly ${length} letters long.`);
-                setStatus(isCustom ? GAME_STATUS.SETUP : GAME_STATUS.MENU);
+                setStatus(GAME_STATUS.MENU);
                 return;
             }
 
-            // --- Custom Level Specific Checks ---
-            if (isCustom) {
-                if (s === t) {
-                    setMessage(`[Validation Error]: The Start Word and Target Word cannot be the same. Please choose different words.`);
-                    setStatus(GAME_STATUS.SETUP);
-                    return;
-                }
-                if (!/^[a-z]+$/.test(s) || !/^[a-z]+$/.test(t)) {
-                    setMessage(`[Validation Error]: Words must only contain lowercase English letters (a-z) and no spaces.`);
-                    setStatus(GAME_STATUS.SETUP);
-                    return;
-                }
-            }
-
+            // --- Note: Custom checks removed for simplification. Only official levels are now used. ---
 
             setWordLength(length);
             
             setLoading(true);
             setMessage('Validating words via API...');
 
-            let isStartValid = true;
-            let isTargetValid = true;
+            // For simplicity and stability, we skip API check for hardcoded levels, assuming they are valid.
+            // If isCustom was true, we'd do the check, but Custom is removed.
 
-            // Only perform dictionary check if it's a Custom Level 
-            if (isCustom) {
-                [isStartValid, isTargetValid] = await Promise.all([
-                    checkWordValidity(s, allowCurseWords),
-                    checkWordValidity(t, allowCurseWords)
-                ]);
-            }
-            
             setLoading(false);
-
-            // --- Dictionary Validation Feedback ---
-            if (!isStartValid || !isTargetValid) {
-                let errorMsg = `[Dictionary Error]: `;
-                
-                let isStartProfane = !allowCurseWords && PROFANITY_LIST.includes(s);
-                let isTargetProfane = !allowCurseWords && PROFANITY_LIST.includes(t);
-
-                if (isStartProfane || isTargetProfane) {
-                    errorMsg = `[Profanity Block]: Profanity not allowed.`; 
-                } else {
-                    if (!isStartValid && !isTargetValid) {
-                        errorMsg += `Neither "${s.toUpperCase()}" nor "${t.toUpperCase()}" are valid words.`;
-                    } else if (!isStartValid) {
-                        errorMsg += `The Start Word "${s.toUpperCase()}" is not a valid English word.`;
-                    } else {
-                        errorMsg += `The Target Word "${t.toUpperCase()}" is not a valid English word.`;
-                    }
-                }
-                
-                setMessage(errorMsg);
-                setStatus(GAME_STATUS.SETUP); 
-                return;
-            }
 
             // Success
             setStartWord(s);
             setTargetWord(t);
             setCurrentPath([s]);
             setCurrentEditWord(s);
-            setMessage(`Start your chain! Click a letter in ${s.toUpperCase()} to change it.`);
+            setMessage(`Tap a letter to begin typing.`); // Updated message to match image style
             setStatus(GAME_STATUS.PLAYING);
         }, [allowCurseWords]); 
 
         const startLevel = (levelKey) => {
             const level = LEVELS[levelKey];
             const pair = level.pairs[Math.floor(Math.random() * level.pairs.length)];
-            resetGame(pair.start, pair.target, level.length, false);
+            // isCustom is false since we only start built-in levels now
+            resetGame(pair.start, pair.target, level.length, false); 
         };
         
         const quitGame = () => {
@@ -589,7 +619,7 @@
                 
                 setCurrentPath(newPath);
                 setCurrentEditWord(newLastWord);
-                setEditingIndex(null); // Clear editing state
+                setEditingIndex(null); 
                 setMessage(`Move undone. Current word is ${newLastWord.toUpperCase()}.`);
             }
         }, [currentPath, status, loading]);
@@ -599,17 +629,14 @@
         const handleLetterClick = useCallback((index) => {
             if (status !== GAME_STATUS.PLAYING || loading) return;
 
-            // Clicking the already active letter cancels editing and dismisses the keyboard
             if (editingIndex === index) {
                 setEditingIndex(null);
-                setMessage('');
+                setMessage('Tap a letter to begin typing.');
                 setCurrentEditWord(lastWord);
-                tempInputRef.current?.blur(); // Explicitly blur to close mobile keyboard
+                tempInputRef.current?.blur(); 
             } else {
-                // Start editing a new letter
                 setEditingIndex(index);
-                setMessage(`Type the new letter for position ${index + 1}.`);
-                // Use a slight delay to ensure the input is rendered before trying to focus it
+                setMessage(`Enter the new letter for position ${index + 1}.`);
                 setTimeout(() => {
                     tempInputRef.current?.focus(); 
                 }, 50);
@@ -619,8 +646,7 @@
         // --- Input Change Handler ---
 
         const handleInputChange = useCallback((event) => {
-            // This function is only attached to the temporary input, so we know we are editing
-            const newChar = event.target.value.toLowerCase().slice(-1); // Get the latest character
+            const newChar = event.target.value.toLowerCase().slice(-1); 
 
             if (newChar.match(/^[a-z]$/) && newChar.length === 1) {
                 
@@ -628,9 +654,7 @@
                 
                 if (newWord[editingIndex] === newChar) {
                     setMessage('You must change the letter at the selected position.');
-                    // Clear the input value to prevent it from holding the same character
                     event.target.value = ''; 
-                    // Immediately unfocus the input to dismiss the keyboard after a character is processed
                     tempInputRef.current?.blur();
                     return;
                 }
@@ -638,38 +662,30 @@
                 newWord[editingIndex] = newChar;
                 const potentialWord = newWord.join('');
                 
-                // Immediately update the visual preview of the word
                 setCurrentEditWord(potentialWord);
-                
-                // Submit the move
                 submitWord(potentialWord);
                 
-                // Reset the input value so the next input starts fresh
                 event.target.value = '';
                 
             } else {
-                // Clear the input value if the typed character was not a letter
                 event.target.value = ''; 
             }
 
-            // Immediately unfocus the input to dismiss the keyboard after a character is processed
             tempInputRef.current?.blur();
 
         }, [editingIndex, lastWord, submitWord]);
         
         // --- Global Keydown Listener for Desktop/Escape ---
-        // Handles physical keyboard input for the single character move AND the ESC key
         const handleGlobalKeyPress = useCallback((event) => {
             if (status !== GAME_STATUS.PLAYING || loading) return;
 
             const key = event.key.toLowerCase();
             
-            // Allow physical key press for typing if editingIndex is active
             if (key.match(/^[a-z]$/) && key.length === 1 && editingIndex !== null) {
                 
-                event.preventDefault(); // Prevent default action (like form submission, etc.)
+                event.preventDefault(); 
 
-                const newWord = lastWord.split(''); // Start from the last *valid* word
+                const newWord = lastWord.split(''); 
                 
                 if (newWord[editingIndex] === key) {
                     setMessage('You must change the letter at the selected position.');
@@ -679,13 +695,9 @@
                 newWord[editingIndex] = key;
                 const potentialWord = newWord.join('');
                 
-                // Immediately update the visual preview of the word
                 setCurrentEditWord(potentialWord);
-                
-                // Then submit the move (which handles validation, API check, and state update)
                 submitWord(potentialWord);
                 
-                // Clear the editing focus right away
                 setEditingIndex(null);
                 
             } else if (key === 'escape') {
@@ -697,30 +709,32 @@
         }, [status, loading, editingIndex, lastWord, submitWord]);
 
         useEffect(() => {
-            // Set up and tear down the global keydown listener
             window.addEventListener('keydown', handleGlobalKeyPress);
             return () => {
                 window.removeEventListener('keydown', handleGlobalKeyPress);
             };
-        }, [handleGlobalKeyPress]); // Dependency array ensures it updates when handlers change
+        }, [handleGlobalKeyPress]); 
 
 
-        // --- NEW: Global Click Listener for Click-Away-To-Cancel ---
+        // --- Global Click Listener for Click-Away-To-Cancel ---
         useEffect(() => {
             if (status !== GAME_STATUS.PLAYING || loading) return;
             if (editingIndex === null) return;
             
             const handleClickOutside = (event) => {
-                // If we are currently editing, and the click target is NOT inside the word path container
-                if (pathContainerRef.current && !pathContainerRef.current.contains(event.target)) {
-                    // This is a click away, so cancel editing
+                // Check if the click is outside the path container and also outside the virtual keyboard
+                const keyboardElement = document.getElementById('virtual-keyboard');
+                
+                const isClickOnKeyboard = keyboardElement && keyboardElement.contains(event.target);
+                const isClickOnWordTiles = pathContainerRef.current && pathContainerRef.current.contains(event.target);
+                
+                if (!isClickOnWordTiles && !isClickOnKeyboard) {
                     setEditingIndex(null); 
                     setCurrentEditWord(lastWord);
                     setMessage('Editing canceled.');
                 }
             };
 
-            // Use 'mousedown' which often fires before 'onClick' and 'onBlur' in a reliable sequence
             document.addEventListener('mousedown', handleClickOutside);
             
             return () => {
@@ -739,45 +753,100 @@
 
             if (!currentMessage && !loading) return null;
 
-            // Check for explicit error markers added in validation logic
-            const isError = currentMessage.includes('[Validation Error]') || currentMessage.includes('[Dictionary Error]') || currentMessage.includes('[Profanity Block]') || currentMessage.includes('differ by only one') || currentMessage.includes('already in your chain');
+            // Check for error messages (only these conditions result in a red background)
+            const isError = currentMessage.includes('[Validation Error]') 
+                || currentMessage.includes('[Dictionary Error]') 
+                || currentMessage.includes('[Profanity Block]') 
+                || currentMessage.includes('differ by only one') 
+                || currentMessage.includes('already in your chain')
+                || currentMessage.includes('is not recognized as a valid word')
+                || currentMessage.includes('You must change the letter at the selected position.') // Explicit validation error
+                || currentMessage.includes('Please tap one of the word tiles')
 
+            
+            // PRIORITY 1: Loading
             if (loading) {
                 currentMessage = message || '...connecting to dictionary...';
                 icon = <Icons.Loader size={iconSize} className="animate-spin" />;
                 colorClass = 'bg-yellow-600';
-            } else if (status === GAME_STATUS.WON) {
+            } 
+            // PRIORITY 2: Error/Negative Status (FIXED PRIORITY ORDERING)
+            else if (isError) { 
+                icon = <Icons.XCircle size={iconSize} />;
+                // Applying the user's requested brighter error style
+                colorClass = 'bg-red-600 border-2 border-red-400 shadow-xl'; 
+            } 
+            // PRIORITY 3: Win
+            else if (status === GAME_STATUS.WON) {
                 icon = <Icons.Trophy size={iconSize} />;
                 colorClass = 'bg-green-600';
-            } else if (isError) {
-                icon = <Icons.XCircle size={iconSize} />;
-                colorClass = 'bg-red-600';
-            } else if (status === GAME_STATUS.PLAYING) {
-                // If message is just a standard one, use blue
+            } 
+            // PRIORITY 4: General Playing/Success (Default)
+            else if (status === GAME_STATUS.PLAYING) {
                 icon = <Icons.CheckCircle size={iconSize} />;
                 colorClass = 'bg-blue-600';
             }
 
 
             return (
-                <div className={`p-4 rounded-xl shadow-2xl text-white font-semibold flex items-center space-x-3 ${colorClass}`}>
+                <div className={`py-2 px-4 rounded-xl shadow-2xl text-white font-semibold flex items-center space-x-3 ${colorClass}`}>
                     {icon}
                     <span>{currentMessage}</span>
                 </div>
             );
         };
 
-        const LevelSelector = () => (
-            <div className="space-y-6">
-                
-                <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4">
-                    <h2 className="text-3xl font-bold text-gray-100 flex items-center">
-                        <Icons.Zap className="mr-3 text-yellow-400" size={28} /> Select Difficulty Level
-                    </h2>
+        const LevelSelector = () => {
+            const [showLevelList, setShowLevelList] = useState(false);
+
+            return (
+                <div className="space-y-6">
                     
-                    {/* NEW: Buttons container for flexibility */}
-                    <div className="flex space-x-4">
-                        {/* NEW: Settings Button */}
+                    <div className="flex flex-col w-full items-center space-y-4">
+                        <h2 className="text-3xl font-bold text-gray-100 flex items-center">
+                            <Icons.Zap className="mr-3 text-yellow-400" size={28} /> Select Level
+                        </h2>
+                        
+                        <div className="relative w-full max-w-sm">
+                            <button
+                                onClick={() => setShowLevelList(prev => !prev)}
+                                className="w-full py-4 px-6 bg-purple-600 hover:bg-purple-700 text-white font-extrabold rounded-xl shadow-lg transition-transform duration-200 transform hover:scale-[1.02] active:scale-95 flex items-center justify-between disabled:opacity-50"
+                                disabled={loading}
+                            >
+                                Choose a Level...
+                                <Icons.ChevronRight size={24} className={`transition-transform duration-300 ${showLevelList ? 'rotate-90' : ''}`} />
+                            </button>
+
+                            {showLevelList && (
+                                <div className="absolute z-10 w-full mt-2 bg-gray-800 rounded-xl shadow-2xl border border-purple-500/50 p-2 space-y-2">
+                                    {Object.keys(LEVELS).map(key => {
+                                        const level = LEVELS[key];
+                                        const color = key === 'EASY' ? 'bg-green-600 hover:bg-green-700' :
+                                                      key === 'MEDIUM' ? 'bg-blue-600 hover:bg-blue-700' :
+                                                      'bg-red-600 hover:bg-red-700';
+                                        
+                                        return (
+                                            <button
+                                                key={key}
+                                                onClick={() => { 
+                                                    startLevel(key); 
+                                                    setShowLevelList(false); // Close after selection
+                                                }}
+                                                disabled={loading}
+                                                className={`w-full p-3 rounded-lg text-white font-extrabold shadow-md transition-all duration-300 transform hover:scale-[1.01] disabled:opacity-50 ${color} text-left`}
+                                            >
+                                                <div className="text-xl mb-1">{level.name}</div>
+                                                <div className="text-xs opacity-80">{level.description} ({level.length} letters)</div>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    
+                    {/* --- Settings/Help buttons --- */}
+                    <div className="flex space-x-4 justify-center pt-4">
                         <button
                             onClick={() => setShowSettings(true)}
                             className="py-2 px-4 bg-gray-500 hover:bg-gray-600 text-white font-bold rounded-full shadow-lg transition-transform duration-200 transform hover:scale-[1.05] active:scale-95 flex items-center justify-center disabled:opacity-50"
@@ -786,7 +855,6 @@
                             <Icons.Settings size={20} className="mr-2" /> Settings
                         </button>
                         
-                        {/* EXISTING: How to Play Button */}
                         <button
                             onClick={() => setShowHelp(true)}
                             className="py-2 px-4 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-full shadow-lg transition-transform duration-200 transform hover:scale-[1.05] active:scale-95 flex items-center justify-center disabled:opacity-50"
@@ -796,183 +864,52 @@
                         </button>
                     </div>
                 </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {Object.keys(LEVELS).map(key => {
-                        const level = LEVELS[key];
-                        const color = key === 'EASY' ? 'bg-green-600 hover:bg-green-700' :
-                                      key === 'MEDIUM' ? 'bg-blue-600 hover:bg-blue-700' :
-                                      'bg-red-600 hover:bg-red-700';
-
-                        return (
-                            <button
-                                key={key}
-                                onClick={() => startLevel(key)}
-                                disabled={loading}
-                                className={`p-6 rounded-xl text-white font-extrabold shadow-xl transition-all duration-300 transform hover:scale-[1.05] disabled:opacity-50 ${color}`}
-                            >
-                                <div className="text-2xl mb-1">{level.name}</div>
-                                <div className="text-sm opacity-80 mb-2">{level.description}</div>
-                                <div className="text-xs italic">({level.length} letters)</div>
-                            </button>
-                        );
-                    })}
-                </div>
-                
-                <CustomWordSetup />
-            </div>
-        );
-
-        const CustomWordSetup = () => {
-            const initialLength = 4;
-            const [customStart, setCustomStart] = useState('word'); 
-            const [customTarget, setCustomTarget] = useState('game');
-            const [customLength, setCustomLength] = useState(initialLength);
-            const [showInput, setShowInput] = useState(status === GAME_STATUS.SETUP);
-            
-            const lengthOptions = Object.values(LEVELS).map(l => l.length);
-            if (!lengthOptions.includes(6)) lengthOptions.push(6);
-            lengthOptions.sort((a, b) => a - b); 
-
-            useEffect(() => {
-                const s = customStart.toLowerCase().trim().slice(0, customLength);
-                const t = customTarget.toLowerCase().trim().slice(0, customLength);
-                setCustomStart(s);
-                setCustomTarget(t);
-            }, [customLength]);
-
-            useEffect(() => {
-                if (status === GAME_STATUS.SETUP) {
-                    setShowInput(true);
-                }
-            }, [status]);
-
-
-            const handleCustomStart = () => {
-                resetGame(customStart, customTarget, customLength, true);
-            };
-
-            const isButtonDisabled = customStart.length !== customLength || 
-                                     customTarget.length !== customLength ||
-                                     customStart.trim() === '' ||
-                                     customTarget.trim() === '' ||
-                                     customStart.toLowerCase() === customTarget.toLowerCase() ||
-                                     loading;
-
-
-            return (
-                <div className="p-6 bg-gray-700/60 rounded-xl shadow-2xl space-y-4 backdrop-blur-md border border-purple-500/50">
-                    <button 
-                        onClick={() => setShowInput(!showInput)}
-                        className="w-full text-left py-2 text-lg font-bold text-purple-300 flex items-center justify-between"
-                    >
-                        Custom Level Setup
-                        <Icons.ChevronRight className={`transition-transform duration-300 ${showInput ? 'rotate-90' : ''}`} />
-                    </button>
-                    
-                    {showInput && (
-                        <div className="space-y-4 pt-2">
-                             <div className="flex items-center space-x-3">
-                                <label className="text-gray-300 min-w-[100px] font-semibold">Word Length:</label>
-                                <select 
-                                    value={customLength} 
-                                    onChange={(e) => {
-                                        setCustomLength(parseInt(e.target.value));
-                                        setMessage('');
-                                    }}
-                                    className="p-2 rounded-lg bg-gray-600 text-white focus:ring-2 focus:ring-purple-400 border border-transparent transition cursor-pointer"
-                                >
-                                    {lengthOptions.map(l => (
-                                        <option key={l} value={l}>{l} Letters</option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="flex flex-col sm:flex-row gap-4">
-                                {/* Start Word Input */}
-                                <input
-                                    type="text"
-                                    // Display in uppercase but store in lowercase
-                                    value={customStart.toUpperCase()} 
-                                    onChange={(e) => setCustomStart(e.target.value.toLowerCase().replace(/[^a-z]/g, '').slice(0, customLength))}
-                                    placeholder={`Start Word (${customLength} letters)`}
-                                    className={`flex-1 p-3 rounded-lg bg-gray-600 text-white placeholder-gray-400 focus:ring-2 border transition font-mono-game uppercase 
-                                        ${customStart.length === customLength ? 'border-green-400' : 'border-red-400'}`}
-                                    maxLength={customLength}
-                                />
-                                {/* Target Word Input */}
-                                <input
-                                    type="text"
-                                    value={customTarget.toUpperCase()}
-                                    onChange={(e) => setCustomTarget(e.target.value.toLowerCase().replace(/[^a-z]/g, '').slice(0, customLength))}
-                                    placeholder={`Target Word (${customLength} letters)`}
-                                    className={`flex-1 p-3 rounded-lg bg-gray-600 text-white placeholder-gray-400 focus:ring-2 border transition font-mono-game uppercase
-                                        ${customTarget.length === customLength ? 'border-green-400' : 'border-red-400'}`}
-                                    maxLength={customLength}
-                                />
-                            </div>
-                            <button
-                                onClick={handleCustomStart}
-                                className="w-full py-3 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-xl shadow-lg transition-transform duration-200 transform hover:scale-[1.02] active:scale-95 flex items-center justify-center disabled:opacity-50"
-                                disabled={isButtonDisabled}
-                            >
-                                <Icons.RefreshCw size={20} className="mr-2" /> Start Custom Level
-                            </button>
-                            {isButtonDisabled && !loading && (
-                                <p className="text-sm text-red-400 text-center">
-                                    Please ensure both words are exactly {customLength} letters long, contain only letters, and are different.
-                                </p>
-                            )}
-                        </div>
-                    )}
-                </div>
             );
         };
 
 
         const WordTile = ({ word, pathIndex }) => {
             const isLastWord = pathIndex === currentPath.length - 1;
-            const isStartWord = pathIndex === 0;
-            const isTargetWord = word === targetWord;
+            // Removed unused constants: isStartWord, isTargetWord
             
             const displayWord = isLastWord ? currentEditWord : word;
             const letters = displayWord.split('');
             const isActive = isLastWord && status === GAME_STATUS.PLAYING && !loading;
 
-            const baseColor = isStartWord 
-                ? 'bg-purple-600/70 text-white' 
-                : isTargetWord 
-                    ? 'bg-green-600/70 text-white' 
-                    : 'bg-gray-700/50 text-gray-200';
-
-            // Non-active words are shown simply
+            // Non-active words are now styled similar to the active word but muted
             if (!isActive) {
+                const isCurrent = pathIndex === currentPath.length - 1;
+                const tileColor = isCurrent ? 'bg-purple-700/90 text-white' : 'bg-gray-700/50 text-gray-200';
+                const letterSize = wordLength === 3 ? 'p-4 text-4xl' : wordLength === 4 ? 'p-3 text-3xl' : 'p-2 text-2xl';
+
                 return (
-                    <div className="p-3 rounded-xl shadow-lg font-mono-game text-xl uppercase transition-all duration-300 transform bg-gray-700/50 text-gray-200">
-                        {word}
+                    <div className="flex justify-center gap-2">
+                        {word.split('').map((char, index) => (
+                            <div key={index} className={`rounded-xl shadow-lg font-mono-game uppercase font-extrabold transition-all duration-300 ${tileColor} ${letterSize}`}>
+                                {char}
+                            </div>
+                        ))}
                     </div>
                 );
             }
             
-            // Active word display: dynamically sized letters
-            const letterSizeClass = wordLength === 3 ? 'w-12 h-12 text-4xl' : wordLength === 4 ? 'w-10 h-10 text-3xl' : wordLength === 5 ? 'w-8 h-8 text-2xl' : 'w-7 h-7 text-xl';
+            // Active word display: dynamically sized letters, styled to match image
+            const letterSizeClass = wordLength === 3 ? 'w-14 h-14 text-4xl' : wordLength === 4 ? 'w-12 h-12 text-3xl' : 'w-10 h-10 text-2xl';
 
             return (
                 <div
-                    className={`flex justify-center items-center rounded-xl shadow-xl font-mono-game uppercase tracking-widest p-2 transition-all duration-300 
-                        ${isActive ? 'bg-gray-700 ring-4 ring-yellow-500/80' : 'bg-gray-800'}`}
+                    className="flex justify-center items-center font-mono-game uppercase tracking-widest gap-3"
                 >
                     {letters.map((char, charIndex) => (
-                        // WRAPPER DIV for positioning the temporary input
                         <div 
                             key={charIndex} 
-                            className={`relative flex items-center justify-center m-1 rounded-lg font-extrabold cursor-pointer transition-all duration-150 
+                            className={`relative flex items-center justify-center rounded-xl font-extrabold cursor-pointer transition-all duration-150 shadow-xl
                                 ${letterSizeClass}
                                 ${editingIndex === charIndex 
-                                    ? 'bg-red-500 text-white shadow-inner ring-2 ring-red-300' // Editing state
+                                    ? 'bg-red-500 text-white shadow-inner ring-4 ring-red-300/50' 
                                     : (char !== lastWord[charIndex] 
-                                        ? 'bg-blue-500 text-white hover:bg-blue-600 ring-2 ring-blue-300' // Changed letter preview
-                                        : 'bg-gray-600/50 text-white hover:bg-gray-600' // Unchanged letter
+                                        ? 'bg-blue-500 text-white hover:bg-blue-600 ring-4 ring-blue-300/50' 
+                                        : 'bg-purple-600 text-white hover:bg-purple-700 ring-4 ring-purple-300/50' 
                                     )
                                 }`
                             }
@@ -980,180 +917,242 @@
                         >
                             {char}
                             
-                            {/* NEW: Temporary Input Overlay */}
+                            {/* Temporary Input Overlay */}
                             {editingIndex === charIndex && (
                                 <input
                                     ref={tempInputRef}
                                     type="text"
-                                    // Make it cover the letter box and be focused
                                     className="absolute inset-0 w-full h-full text-4xl text-transparent bg-transparent border-0 focus:ring-0 text-center font-mono-game cursor-pointer mobile-input"
                                     style={{
-                                        // Mobile hack: sometimes larger font helps trigger the keyboard
                                         fontSize: '2rem', 
                                     }}
-                                    // Use a temporary value to force focus on re-render (will be cleared immediately)
                                     value=""
                                     onChange={handleInputChange} 
-                                    // 🚨 onBlur REMOVED to fix the desktop double-click issue
                                     maxLength="1"
-                                    autoFocus // Attempt to auto-focus on creation
+                                    autoFocus 
                                     autoCorrect="off"
                                     autoCapitalize="none"
                                     spellCheck="false"
                                 />
                             )}
-                            
-                            {/* Flashing cursor effect on active editing letter */}
-                            {editingIndex === charIndex && <div className="absolute w-1 h-3 bg-white animate-pulse" style={{ animationDuration: '0.8s' }}></div>}
                         </div>
                     ))}
                 </div>
             );
         };
         
-        const WordPathDisplay = () => {
-            // FIX: Ref for auto-scrolling
-            const scrollRef = useRef(null); 
+        // --- WordPathDisplay component (Custom Scrollbar Applied) ---
+const WordPathDisplay = () => {
+    // Define a ref to reference the scrollable container element
+    const scrollContainerRef = React.useRef(null);
 
-            // FIX: Auto-scroll effect
-            useEffect(() => {
-                if (scrollRef.current) {
-                    scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-                }
-            }, [currentPath]);
+    // Use useEffect to scroll to the right whenever the path changes
+    React.useEffect(() => {
+        if (scrollContainerRef.current) {
+            // Set the horizontal scroll position to the maximum possible value
+            scrollContainerRef.current.scrollLeft = scrollContainerRef.current.scrollWidth;
+        }
+    }, [currentPath]); // Depend on currentPath, so it runs every time a new word is added
 
-            return (
-                <div className="p-6 bg-gray-800/80 rounded-xl shadow-inner space-y-4">
-                    
-                    {/* NEW: Flex container for Header: "Your Chain" (Left) and "Goal Word" (Right) */}
-                    <div className="flex justify-between items-center pb-2 border-b border-gray-700/50">
-                        <h2 className="text-2xl font-bold text-gray-200">Your Chain</h2>
-                        
-                        {/* NEW: Goal Word Display */}
-                        <div className="flex items-center text-gray-300 space-x-2">
-                            <span className="font-semibold flex items-center text-lg"><Icons.BookOpen className="mr-2 text-green-400" size={20} /> Goal:</span>
-                            <span className="font-extrabold text-2xl text-green-400 uppercase font-mono-game">{targetWord}</span>
+    // Only render when playing or won
+    if (status === GAME_STATUS.PLAYING || status === GAME_STATUS.WON) {
+        const lastIdx = currentPath.length - 1;
+        const last = currentPath[lastIdx];
+
+        return (
+            <div ref={pathContainerRef} className="flex flex-col items-center gap-4 w-full">
+                
+                {/* 1. Current Active Word (Always visible) */}
+                <WordTile word={last} pathIndex={lastIdx} />
+
+                {/* 2. Full Chain History (Horizontal Scrolling) */}
+                {currentPath.length > 0 && (
+                    // Outer container to enforce max width and center the scrollable area
+                    <div className="w-full max-w-md mx-auto">
+                        {/* Inner container: Apply ref, overflow, and the custom-scrollbar class */}
+                        <div 
+                            ref={scrollContainerRef} // Assign the ref
+                            // ADDED: custom-scrollbar class for styling
+                            className="flex flex-nowrap overflow-x-auto gap-2 p-2 bg-gray-800/60 rounded-xl shadow-inner border border-gray-700/50 custom-scrollbar"
+                        >
+                            {currentPath.map((word, index) => (
+                                <React.Fragment key={index}>
+                                    <span 
+                                        className={`flex-shrink-0 px-3 py-1 rounded-md font-mono-game text-sm font-bold uppercase shadow-sm 
+                                            ${index === currentPath.length - 1 
+                                                ? 'bg-teal-600 text-white' // Highlight the current word
+                                                : 'bg-gray-700 text-gray-300' // Previous words
+                                            }`
+                                        }
+                                    >
+                                        {word}
+                                    </span>
+                                    {/* Show arrow only if it's NOT the very last word in the whole chain */}
+                                    {index < currentPath.length - 1 && (
+                                        <span className="flex items-center text-gray-500 text-lg flex-shrink-0">&rarr;</span>
+                                    )}
+                                </React.Fragment>
+                            ))}
                         </div>
                     </div>
+                )}
+            </div>
+        );
+    }
+    
+    return null; // Don't render if not playing or won
+};
+// --- End WordPathDisplay component ---
 
-                    {/* FIX: Set max-height to 200px (scroll after 3 words) and attach ref. Added pr-2 for scrollbar. */}
-                    <div 
-                        ref={scrollRef}
-                        className="flex flex-col space-y-3 pr-2" 
-                        style={{ maxHeight: '200px', overflowY: 'auto' }} 
-                    >
-                        {currentPath.map((word, index) => {
-                            return (
-                                <div key={index} className="flex items-center">
-                                    {/* Step count display */}
-                                    <div className="min-w-10 text-center font-bold text-lg text-gray-400 pr-4">{index + 1}.</div>
-                                    {/* The word tile itself */}
-                                    {/* FIX: Added my-1 wrapper to prevent outline cut-off */}
-                                    <div className="my-1">
-                                        <WordTile word={word} pathIndex={index} />
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
+        // --- Virtual Keyboard Component ---
+        const VirtualKeyboard = ({ onKeyPress }) => {
+            const rows = [
+                ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+                ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+                ['Z', 'X', 'C', 'V', 'B', 'N', 'M']
+            ];
+
+            const handleKeyClick = (key) => {
+                if (key.length === 1 && editingIndex !== null) {
+                    // Simulate the global keypress event logic
+                    const event = {
+                        key: key.toLowerCase(),
+                        preventDefault: () => {} // Mock preventDefault
+                    };
+                    handleGlobalKeyPress(event);
+                } else {
+                    // Added a message for better UX now that keys are always enabled but only functional when a tile is selected
+                    setMessage(`Please tap one of the word tiles above to select a letter position before typing.`);
+                }
+            };
+            
+            const baseKeyClass = "p-3 rounded-lg text-white font-extrabold text-lg transition-colors duration-150 shadow-md transform active:scale-95";
+            const enabledKeyClass = "bg-gray-700 hover:bg-gray-600";
+            // The disabledKeyClass is removed entirely
+
+            return (
+                // REMOVED: conditional opacity and pointer-events classes
+                <div id="virtual-keyboard" className="w-full max-w-xl mx-auto p-4 rounded-xl bg-gray-800 shadow-2xl space-y-2">
+                    {rows.map((row, rowIndex) => (
+                        <div 
+                            key={rowIndex} 
+                            // FIX: Centered all rows and removed offset margins
+                            className={`flex justify-center gap-2 mx-auto`}
+                        >
+                            {row.map(key => (
+                                <button
+                                    key={key}
+                                    onClick={() => handleKeyClick(key)}
+                                    // FIX: Removed conditional class and disabled attribute
+                                    // FIX: Added max-w for better spacing consistency
+                                    className={`${baseKeyClass} ${enabledKeyClass} flex-1 min-w-[30px] max-w-[40px]`}
+                                >
+                                    {key}
+                                </button>
+                            ))}
+                        </div>
+                    ))}
                 </div>
             );
         };
+        // --- End Virtual Keyboard Component ---
+
 
         // --- Main Render Logic ---
         
-        // --- Main Render Logic ---
-        
         const renderGameContent = () => {
-            // Only render the full game board if we are actively playing or have won.
             if (status === GAME_STATUS.PLAYING || status === GAME_STATUS.WON) {
                 
                 const isUndoDisabled = currentPath.length <= 1 || loading;
                 
-                // New layout: Word Chain (Top), Controls (Bottom Left), Stats (Bottom Right)
                 return (
-                    // Main Game Content container: flex column to stack chain (top) and controls (bottom)
-                    <div className="flex flex-col gap-6 w-full h-full">
+                    <div className="flex flex-col space-y-4 w-full h-full items-center">
                         
-                        {/* 1. TOP SECTION: Word Path Display (The Word Chain, now including the Goal Word in its header) */}
+                        {/* 1. HEADER-LIKE STATS BAR (Matches image_37c99f.png) */}
+                        <div className="w-full max-w-md flex justify-between items-center text-lg font-extrabold text-gray-200 border-b-2 border-gray-700 pb-3 mb-4">
+                            <div className="text-center">
+                                <span className="text-sm text-purple-400 block font-normal">Start:</span>
+                                <span className="font-mono-game uppercase text-purple-400">{startWord}</span>
+                            </div>
+                            <div className="text-center">
+                                <span className="text-sm text-gray-400 block font-normal">Steps:</span>
+                                <span className="font-mono-game text-yellow-400">{currentPath.length - 1}</span>
+                            </div>
+                            <div className="text-center">
+                                <span className="text-sm text-green-400 block font-normal">Goal:</span>
+                                <span className="font-mono-game uppercase text-green-400">{targetWord}</span>
+                            </div>
+                        </div>
+
+                        {/* Message Display */}
+                        <div className="w-full max-w-lg mb-6">
+                            {/* IF EDITING: Show the specific instructional message with a red background and Zap icon. */}
+                            {editingIndex !== null && status === GAME_STATUS.PLAYING ? (
+                                <div className="py-2 px-4 bg-blue-600 text-white font-semibold rounded-xl shadow-lg flex items-center text-left">
+                                    <Icons.Zap size={20} className="mr-2" /> {message}
+                                </div>
+                            ) : (
+                                <MessageDisplay />
+                            )}
+                        </div>
+                        
+                        {/* 2. ACTIVE WORD TILES */}
                         {currentPath.length > 0 && <WordPathDisplay />}
                         
-                        {/* 2. BOTTOM CONTAINER: Controls (Left) and Stats (Right) */}
-                        {/* mt-auto pushes this section to the bottom, grid splits the area */}
-                        <div className="mt-auto grid grid-cols-1 lg:grid-cols-3 gap-6 pt-6 border-t border-gray-700/50">
-                            
-                            {/* 2a. LEFT COLUMN: Controls and Message (Bottom Left) - Span 2 columns on large screens */}
-                            <div className="lg:col-span-2 flex flex-col gap-4">
-                                
-                                {/* Message Display / Start Instruction */}
-                                {message 
-                                    ? <MessageDisplay />
-                                    : (currentPath.length === 1 && status === GAME_STATUS.PLAYING && !loading) && (
-                                        <div className="py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg flex items-center justify-center">
-                                            <Icons.CheckCircle size={20} className="mr-2" /> Start your chain! Click a letter in {startWord.toUpperCase()} to change it.
-                                        </div>
-                                    )
-                                }
+                        {/* 3. CONTROL BUTTONS (Matches image_37c99f.png style) */}
+                        <div className="flex flex-col sm:flex-row gap-4 w-full max-w-sm mt-8">
+                            {/* Quit Button */}
+                            <button
+                                onClick={quitGame}
+                                className="flex-1 py-2 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-xl shadow-lg transition-colors flex items-center justify-center disabled:opacity-50"
+                                disabled={loading}
+                            >
+                                <Icons.LogOut size={20} className="mr-2" /> Quit Game
+                            </button>
 
-                                {/* Undo/Quit Buttons */}
-                                <div className="flex flex-col sm:flex-row gap-4 w-full">
-                                    {/* Undo Button */}
-                                    <button
-                                        onClick={undoLastMove}
-                                        className="flex-1 py-3 bg-blue-700 hover:bg-blue-600 text-white font-bold rounded-xl shadow-lg transition-transform duration-200 transform hover:scale-[1.02] active:scale-95 flex items-center justify-center disabled:opacity-50"
-                                        disabled={isUndoDisabled}
-                                        title={isUndoDisabled ? "Cannot undo the starting word" : "Undo the last move"}
-                                    >
-                                        <Icons.RotateCcw size={20} className="mr-2" /> Undo Last Move
-                                    </button>
+                            {/* Undo Button - styled to match Submit button's prominence from the image, 
+                                but repurposed for Undo since we don't have a separate Submit. */}
+                            <button
+                                onClick={undoLastMove}
+                                className="flex-1 py-2 bg-green-700 hover:bg-green-600 text-white font-bold rounded-xl shadow-lg transition-colors flex items-center justify-center disabled:opacity-50"
+                                disabled={isUndoDisabled}
+                                title={isUndoDisabled ? "Cannot undo the starting word" : "Undo the last move"}
+                            >
+                                <Icons.RotateCcw size={20} className="mr-2" /> Undo Last
+                            </button>
+                        </div>
 
-                                    {/* Quit Button */}
-                                    <button
-                                        onClick={quitGame}
-                                        className="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-lg transition-transform duration-200 transform hover:scale-[1.02] active:scale-95 flex items-center justify-center disabled:opacity-50"
-                                        disabled={loading}
-                                    >
-                                        <Icons.LogOut size={20} className="mr-2" /> Quit Game
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* 2b. RIGHT COLUMN: Game Stats (Bottom Right) - Goal Word removed from here */}
-                            <div className="lg:col-span-1 p-6 bg-gray-800/60 rounded-xl shadow-2xl space-y-3 backdrop-blur-md border border-gray-700">
-                                <h3 className="text-xl font-bold text-gray-100 mb-3 border-b border-gray-600 pb-2">Game Stats</h3>
-                                <div className="flex justify-between items-center text-gray-300">
-                                    <span className="font-semibold flex items-center"><Icons.Hash className="mr-2 text-yellow-400" size={18} /> Steps Taken:</span>
-                                    <span className="font-extrabold text-xl text-yellow-400 font-mono-game">{currentPath.length - 1}</span>
-                                </div>
-                                <div className="flex justify-between items-center text-gray-300">
-                                    <span className="font-semibold flex items-center"><Icons.Zap className="mr-2 text-purple-400" size={18} /> Word Length:</span>
-                                    <span className="font-extrabold text-xl text-purple-400 font-mono-game">{wordLength}</span>
-                                </div>
-                            </div>
+                        {/* 4. VIRTUAL KEYBOARD - Always shown when playing */}
+                        <div className="w-full mt-6">
+                            <VirtualKeyboard />
                         </div>
                     </div>
                 );
             }
 
-            // Status is MENU or SETUP (failed validation or initializing Custom Level)
-            // Render the LevelSelector, which contains the CustomWordSetup component.
-            return <LevelSelector />;
+            // Status is MENU or SETUP (FIXED: Removed the duplicate "Select Level" h2 tag)
+            return (
+                <div className="flex flex-col items-center space-y-8 w-full">
+                    {/* The LevelSelector component already contains the "Select Level" heading. */}
+                    <LevelSelector />
+                </div>
+            );
         };
         
         return (
             <div className="min-h-screen bg-gray-900 text-white p-4 sm:p-8 flex justify-center items-start pt-10">
                 <div className="w-full max-w-4xl space-y-8">
-                    {/* Title and Header - NAME IS WORD CHAIN */}
-                    <header className="text-center space-y-2 mb-8">
+                    {/* Title and Header - SUBTITLE REMOVED WHEN PLAYING/WON */}
+                    <header className="text-center space-y-2 mb-12">
                         <h1 className="text-5xl font-extrabold tracking-wide text-gray-200">
-                            The Word<br className="sm:hidden" /> <span className="text-teal-400">Ladder</span><br className="sm:hidden" /> Game
+                            The <span className="text-teal-400">Word</span><br className="sm:hidden" /> Ladder Game
                         </h1>
-                        <p className="text-lg text-gray-400 italic">
-                            {status === GAME_STATUS.MENU || status === GAME_STATUS.SETUP 
-                                ? "Solve the word puzzle by changing one letter at a time!" 
-                                : "Click a letter in the active word, then type a new letter to form the next valid word."
-                            }
-                        </p>
+                        {/* The subtitle is now only shown in the initial menu/setup screen. */}
+                        {(status === GAME_STATUS.MENU || status === GAME_STATUS.SETUP) && (
+                            <p className="text-lg text-gray-400 italic">
+                                Solve the word puzzle by changing one letter at a time!
+                            </p>
+                        )}
                     </header>
                     
                     {/* Message is shown above the LevelSelector if status is MENU/SETUP and an error exists */}
@@ -1161,7 +1160,6 @@
                     
                     {renderGameContent()}
                     
-                    {/* NEW: Settings Modal */}
                     {showSettings && (
                         <SettingsModal 
                             onClose={() => setShowSettings(false)} 
@@ -1170,10 +1168,8 @@
                         />
                     )}
 
-                    {/* EXISTING: Help Modal */}
                     {showHelp && <HelpModal onClose={() => setShowHelp(false)} />}
                     
-                    {/* NEW: Win Modal */}
                     {status === GAME_STATUS.WON && (
                         <WinModal 
                             chain={currentPath}
