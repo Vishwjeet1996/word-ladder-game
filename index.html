@@ -858,61 +858,59 @@
 
 
         const WordTile = ({ word, pathIndex }) => {
-            const isLastWord = pathIndex === currentPath.length - 1;
-            // Removed unused constants: isStartWord, isTargetWord
-            
-            const displayWord = isLastWord ? currentEditWord : word;
-            const letters = displayWord.split('');
-            const isActive = isLastWord && status === GAME_STATUS.PLAYING && !loading;
+    const isLastWord = pathIndex === currentPath.length - 1;
+    
+    const displayWord = isLastWord ? currentEditWord : word;
+    const letters = displayWord.split('');
+    const isActive = isLastWord && status === GAME_STATUS.PLAYING && !loading;
 
-            // Non-active words are now styled similar to the active word but muted
-            if (!isActive) {
-                const isCurrent = pathIndex === currentPath.length - 1;
-                const tileColor = isCurrent ? 'bg-purple-700/90 text-white' : 'bg-gray-700/50 text-gray-200';
-                const letterSize = wordLength === 3 ? 'p-4 text-4xl' : wordLength === 4 ? 'p-3 text-3xl' : 'p-2 text-2xl';
+    // FIX 1: Define fixed sizes with a size buffer (e.g., w-14 (56px) -> w-[60px]) to reserve space for outline/shadow
+    const fixedLetterSizeClass = wordLength === 3 ? 'w-[60px] h-[60px] text-4xl' : wordLength === 4 ? 'w-[52px] h-[52px] text-3xl' : 'w-[44px] h-[44px] text-2xl';
 
-                return (
-                    <div className="flex justify-center gap-2">
-                        {word.split('').map((char, index) => (
-                            <div key={index} className={`rounded-xl shadow-lg font-mono-game uppercase font-extrabold transition-all duration-300 ${tileColor} ${letterSize}`}>
-                                {char}
-                            </div>
-                        ))}
+    // Non-active words (History display)
+    if (!isActive) {
+        const isCurrent = pathIndex === currentPath.length - 1;
+        const tileColor = isCurrent ? 'bg-purple-700/90 text-white' : 'bg-gray-700/50 text-gray-200';
+        
+        return (
+            <div className="flex justify-center gap-2">
+                {word.split('').map((char, index) => (
+                    // History tiles are stable with fixed size
+                    <div key={index} className={`flex items-center justify-center rounded-xl shadow-lg font-mono-game uppercase font-extrabold transition-all duration-300 ${tileColor} ${fixedLetterSizeClass}`}>
+                        {char}
                     </div>
-                );
-            }
-            
-            // Active word display: dynamically sized letters, styled to match image
-            const letterSizeClass = wordLength === 3 ? 'w-14 h-14 text-4xl' : wordLength === 4 ? 'w-12 h-12 text-3xl' : 'w-10 h-10 text-2xl';
-
-            return (
-                <div
-                    className="flex justify-center items-center font-mono-game uppercase tracking-widest gap-3"
+                ))}
+            </div>
+        );
+    }
+    
+    // Active word display (Stabilized)
+    return (
+        <div
+            className="flex justify-center items-center font-mono-game uppercase tracking-widest gap-3"
+        >
+            {letters.map((char, charIndex) => (
+                <div 
+                    key={charIndex} 
+                    // FIX 2: Removed transition-all and hover effects for instant, stable rendering.
+                    // FIX 3: Switched from 'ring-4' to 'outline outline-4' for better structural stability (Outline doesn't affect box size).
+                    className={`relative flex items-center justify-center rounded-xl font-extrabold cursor-pointer shadow-xl
+                        ${fixedLetterSizeClass} 
+                        ${editingIndex === charIndex 
+                            ? 'bg-red-500 text-white shadow-inner outline outline-4 outline-red-300/50' 
+                            : (char !== lastWord[charIndex] 
+                                ? 'bg-blue-500 text-white outline outline-4 outline-blue-300/50' 
+                                : 'bg-purple-600 text-white outline outline-4 outline-purple-300/50' 
+                            )
+                        }`}
+                    onClick={() => isActive && handleLetterClick(charIndex)}
                 >
-                    {letters.map((char, charIndex) => (
-                        <div 
-                            key={charIndex} 
-                            className={`relative flex items-center justify-center rounded-xl font-extrabold cursor-pointer transition-all duration-150 shadow-xl
-                                ${letterSizeClass}
-                                ${editingIndex === charIndex 
-                                    ? 'bg-red-500 text-white shadow-inner ring-4 ring-red-300/50' 
-                                    : (char !== lastWord[charIndex] 
-                                        ? 'bg-blue-500 text-white hover:bg-blue-600 ring-4 ring-blue-300/50' 
-                                        : 'bg-purple-600 text-white hover:bg-purple-700 ring-4 ring-purple-300/50' 
-                                    )
-                                }`
-                            }
-                            onClick={() => isActive && handleLetterClick(charIndex)}
-                        >
-                            {char}
-                            
-                            {/* Temporary Input Overlay */}
-                           
-                        </div>
-                    ))}
+                    {char}
                 </div>
-            );
-        };
+            ))}
+        </div>
+    );
+};
         
         // --- WordPathDisplay component (Custom Scrollbar Applied) ---
 const WordPathDisplay = () => {
@@ -999,25 +997,25 @@ const WordPathDisplay = () => {
         }
     };
             
-    const baseKeyClass = "p-3 rounded-lg text-white font-extrabold text-lg transition-colors duration-150 shadow-md transform active:scale-95";
+    // FIX 1: Reverting to original vertical padding (p-3) but using reduced horizontal padding (px-1)
+    const baseKeyClass = "p-3 px-1 rounded-lg text-white font-extrabold text-lg transition-colors duration-150 shadow-md transform active:scale-95";
     const enabledKeyClass = "bg-gray-700 hover:bg-gray-600";
     // The disabledKeyClass is removed entirely
 
     return (
-        // FIX: Changed p-4 to p-2 for less external padding
+        // Kept p-2 and gap-1 for correct mobile fitting
         <div id="virtual-keyboard" className="w-full max-w-xl mx-auto p-2 rounded-xl bg-gray-800 shadow-2xl space-y-2">
             {rows.map((row, rowIndex) => (
                 <div 
                     key={rowIndex} 
-                    // FIX: Changed gap-2 to gap-1 for tighter key spacing
                     className={`flex justify-center gap-1 mx-auto`}
                 >
                     {row.map(key => (
                         <button
                             key={key}
                             onClick={() => handleKeyClick(key)}
-                            // FIX: Added max-w for better spacing consistency
-                            className={`${baseKeyClass} ${enabledKeyClass} flex-1 min-w-[30px] max-w-[40px]`}
+                            // FIX 2: Reduced max-w to [30px] for a very narrow key
+                            className={`${baseKeyClass} ${enabledKeyClass} flex-1 min-w-[30px] max-w-[30px]`}
                         >
                             {key}
                         </button>
@@ -1115,7 +1113,7 @@ const WordPathDisplay = () => {
             <div className="min-h-screen bg-gray-900 text-white p-4 sm:p-8 flex justify-center items-start pt-10">
                 <div className="w-full max-w-4xl space-y-8">
                     {/* Title and Header - SUBTITLE REMOVED WHEN PLAYING/WON */}
-                    <header className="text-center space-y-2 mb-12">
+                    <header className="text-center space-y-2 mb-8">
                         <h1 className="text-4xl font-extrabold tracking-wide text-gray-200">
                             The <span className="text-teal-400">Word</span><br className="sm:hidden" /> Ladder Game
                         </h1>
