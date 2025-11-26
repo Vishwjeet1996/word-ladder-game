@@ -60,7 +60,28 @@
             font-weight: 900;
             cursor: pointer;
             transition: all 0.15s;
+			/* 3D properties: */
+			transform-style: preserve-3d;
+			backface-visibility: hidden;
         }
+		
+		/* New styles for the winning tiles */
+			.win-tile {
+				background-color: #10b981 !important; /* Success Color (Green) */
+				border-color: #059669 !important; /* Darker green border */
+				color: #1f2937 !important; 
+				box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.5), 0 4px 6px -2px rgba(16, 185, 129, 0.05); 
+			}
+			
+		@keyframes win-pulse {
+			0% { box-shadow: 0 0 0 rgba(16, 185, 129, 0.0); } /* No shadow */
+			50% { box-shadow: 0 0 50px 20px rgba(16, 185, 129, 0.8); } /* Bright green glow */
+			100% { box-shadow: 0 0 0 rgba(16, 185, 129, 0.0); }
+		}
+
+		.win-pulse {
+			animation: win-pulse 1s ease-out; /* Match the duration of your tile flips */
+		}	
 
         @media (min-width: 640px) { /* sm breakpoint: restore standard size on tablets/desktop */
             .letter-tile {
@@ -270,98 +291,114 @@
         </div> 
         
         <div id="game-screen" class="hidden w-full max-w-lg p-4 sm:p-0 space-y-6">
-            
-            <header class="text-white text-center">
-                <h1 id="game-title" class="text-4xl md:text-5xl font-extrabold text-center mb-6 tracking-tight">
-                    <span class="text-green-400">3</span>-Letter Warmup
-                </h1>
-                <div class="flex justify-between items-center text-lg mt-4 border-b border-gray-700 pb-3">
-                    <div>
-                        <span class="text-gray-400 font-medium">Start:</span>
-                        <div id="start-word-display" class="text-2xl font-bold text-blue-400">RUN</div>
-                    </div>
-                    <div class="text-center">
-                        <span class="text-gray-400 font-medium">Steps:</span>
-                        <div id="steps-display-game" class="text-3xl font-extrabold text-yellow-400">0</div>
-                    </div>
-                    <div>
-                        <span class="text-gray-400 font-medium">Goal:</span>
-                        <div id="goal-word-display" class="text-2xl font-bold text-red-400">KID</div>
-                    </div>
-                </div>
-            </header>
+    
+    <div id="top-bar-controls" class="flex justify-between items-center px-2 py-3">
+        <div class="flex space-x-3">
+            <button id="settings-btn-game" class="open-modal-btn p-2 rounded-full bg-gray-700 hover:bg-gray-600 transition-colors" data-modal="settings-modal">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-white">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.514c.55 0 1.02.398 1.11.94 1.29.548 2.378 1.554 3.076 2.776 1.11 1.956 1.11 4.238 0 6.194a7.55 7.55 0 01-3.076 2.776c-.09.542-.56.94-1.11.94h-2.514c-.55 0-1.02-.398-1.11-.94a7.55 7.55 0 01-3.076-2.776c-1.11-1.956-1.11-4.238 0-6.194a7.55 7.55 0 013.076-2.776zM12 12.75a.75.75 0 100-1.5.75.75 0 000 1.5z" />
+                </svg>
+            </button>
+            <button id="how-to-play-btn-game" class="open-modal-btn p-2 rounded-full bg-gray-700 hover:bg-gray-600 transition-colors" data-modal="how-to-play-modal">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-white">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712L12 15l-2.121-2.121c-1.172-1.025-1.172-2.687 0-3.712zM15 11.25a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                </svg>
+            </button>
+        </div>
+        <div class="flex space-x-3">
+            <button id="reset-word-btn" class="p-2 rounded-full bg-yellow-600 hover:bg-yellow-500 transition-colors text-white font-bold text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.751m-2.885 8.167v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 01-13.803 3.751m-5.462-8.417a8.25 8.25 0 0113.803-3.751" />
+                </svg>
+            </button>
+            <button id="quit-game-btn" class="p-2 rounded-full bg-red-600 hover:bg-red-500 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-white">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H5a3 3 0 01-3-3V7a3 3 0 013-3h5a3 3 0 013 3v1" />
+                </svg>
+            </button>
+        </div>
+    </div>
 
-            <div class="flex items-center justify-center p-4 rounded-xl bg-gray-800 shadow-xl">
-                <div id="current-word" class="flex space-x-1">
-                    </div>
-            </div>
-            
-            <div class="flex items-center justify-center p-4 rounded-xl bg-gray-800 shadow-xl space-x-4">
-                <div id="history-scroll-container" class="w-full overflow-x-auto whitespace-nowrap py-2 custom-scrollbar">
-                    <div id="ladder-history" class="text-white text-lg font-mono inline-flex items-center space-x-2">
-                        </div>
-                </div>
-            </div>
 
-            <div class="flex justify-center space-x-4">
-                <button id="quit-game-btn" class="flex items-center px-6 py-3 bg-gray-700 text-white font-bold rounded-xl shadow-md transition-colors hover:bg-gray-600 border-b-4 border-gray-800">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H5a3 3 0 01-3-3V7a3 3 0 013-3h5a3 3 0 013 3v1" />
-                    </svg>
-                    Quit Game
-                </button>
-                <button id="undo-btn" class="flex items-center px-6 py-3 bg-yellow-600 text-white font-bold rounded-xl shadow-md transition-colors hover:bg-yellow-500 border-b-4 border-yellow-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    Undo Last
-                </button>
+    <header class="text-white text-center">
+        <h1 id="game-title" class="text-4xl md:text-5xl font-extrabold text-center mb-6 tracking-tight">
+            <span class="text-green-400">5</span>-Letter Challenge
+        </h1>
+        <div class="flex justify-between items-center text-lg mt-4 border-b border-gray-700 pb-3">
+            <div>
+                <span class="text-gray-400 font-medium">Start:</span>
+                <div id="start-word-display" class="text-2xl font-bold text-blue-400">CLOTH</div>
             </div>
-            
-            <div class="p-4 rounded-xl bg-gray-800 shadow-xl mt-6">
-                <div id="keyboard" class="space-y-2">
-                    <div class="flex justify-center space-x-1 sm:space-x-2">
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="Q">Q</div>
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="W">W</div>
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="E">E</div>
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="R">R</div>
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="T">T</div>
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="Y">Y</div>
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="U">U</div>
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="I">I</div>
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="O">O</div>
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="P">P</div>
-                    </div>
-                    <div class="flex justify-center space-x-1 sm:space-x-2">
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="A">A</div>
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="S">S</div>
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="D">D</div>
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="F">F</div>
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="G">G</div>
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="H">H</div>
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="J">J</div>
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="K">K</div>
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="L">L</div>
-                    </div>
-                    <div class="flex justify-center space-x-1 sm:space-x-2">
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="Z">Z</div>
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="X">X</div>
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="C">C</div>
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="V">V</div>
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="B">B</div>
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="N">N</div>
-                        <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="M">M</div>
-                    </div>
+            <div class="text-center">
+                <span class="text-gray-400 font-medium">Steps:</span>
+                <div id="steps-display-game" class="text-3xl font-extrabold text-yellow-400">0</div>
+            </div>
+            <div>
+                <span class="text-gray-400 font-medium">Goal:</span>
+                <div id="goal-word-display" class="text-2xl font-bold text-red-400">SMILE</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex items-center justify-center p-4 rounded-xl bg-gray-800 shadow-xl">
+        <div id="current-word" class="flex space-x-1">
+            </div>
+    </div>
+    
+    <div class="flex items-center justify-center px-4 py-2 rounded-xl bg-gray-800 shadow-xl space-x-4">
+        <div id="history-scroll-container" class="w-full overflow-x-auto whitespace-nowrap py-2 custom-scrollbar">
+            <div id="ladder-history" class="text-white text-lg font-mono inline-flex items-center space-x-2">
                 </div>
+        </div>
+    </div>
+
+    <div class="p-4 rounded-xl bg-gray-800 shadow-xl mt-6">
+        <div id="keyboard" class="space-y-2">
+            <div class="flex justify-center space-x-1 sm:space-x-2">
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="Q">Q</div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="W">W</div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="E">E</div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="R">R</div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="T">T</div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="Y">Y</div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="U">U</div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="I">I</div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="O">O</div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="P">P</div>
+            </div>
+            <div class="flex justify-center space-x-1 sm:space-x-2">
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="A">A</div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="S">S</div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="D">D</div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="F">F</div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="G">G</div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="H">H</div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="J">J</div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="K">K</div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="L">L</div>
+            </div>
+            <div class="flex justify-center space-x-1 sm:space-x-2">
+                <button id="submit-btn" class="flex-grow bg-green-600 text-white font-bold rounded-lg shadow-md transition-colors hover:bg-green-500 border-b-4 border-green-700 text-sm py-1.5" style="width: 15vw; max-width: 5.5rem;">
+                    Enter 
+                </button>
                 
-                <div class="flex justify-center mt-4"> 
-                    <button id="submit-btn" class="w-full max-w-xs p-3 bg-green-600 text-white font-bold rounded-xl shadow-md transition-colors hover:bg-green-500 border-b-4 border-green-700 text-lg">
-                        Submit
-                    </button>
-                </div>
-            </div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="Z">Z</div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="X">X</div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="C">C</div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="V">V</div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="B">B</div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="N">N</div>
+                <div class="keyboard-key bg-gray-600 text-white rounded-lg" data-key="M">M</div>
 
-        </div> 
+                <button id="undo-btn" class="flex-grow bg-yellow-600 text-white font-bold rounded-lg shadow-md transition-colors hover:bg-yellow-500 border-b-4 border-yellow-700 text-xs py-1.5" style="width: 15vw; max-width: 5.5rem;">
+                    Undo
+                </button>
+            </div>
+        </div>
+        
+        </div>
+
+</div> 
         
         <div id="how-to-play-modal" class="modal-overlay fixed inset-0 hidden items-center justify-center z-40 bg-black bg-opacity-70">
             <div class="modal-content bg-[#1e293b] rounded-lg shadow-2xl p-6 md:p-8 max-w-lg mx-4 border-t-4 border-purple-500 relative max-h-[90vh] overflow-y-auto">
@@ -519,6 +556,7 @@
         const stepsDisplayGame = document.getElementById('steps-display-game');
         const ladderHistory = document.getElementById('ladder-history');
         const historyScrollContainer = document.getElementById('history-scroll-container'); // New element
+		const mainGameContainer = document.getElementById('game-container');
 		
 
         // --- UTILITY FUNCTIONS ---
@@ -585,6 +623,24 @@
 			
 			return exists;
 		}
+		
+		/**
+		 * Resets the current word display and the currentWord array to the last valid word in history.
+		 */
+		function revertWordDisplay() {
+			// 1. Get the last valid word (which is the last element in the history array)
+			const lastValidWord = currentHistory[currentHistory.length - 1];
+
+			// 2. Reset the global currentWord array
+			// This is crucial because input modifies this array directly
+			currentWord = lastValidWord.split('');
+
+			// 3. Update the visual tiles to match the last valid word
+			// wordTiles is a global array of the letter tile DOM elements
+			wordTiles.forEach((tile, index) => {
+				tile.textContent = currentWord[index];
+			});
+		}
 
         // Function to convert a number to an ordinal string (1 -> 1st, 2 -> 2nd, etc.)
 		function getOrdinal(n) {
@@ -611,6 +667,66 @@
                 }, 300); 
             }, duration);
         }
+		
+		/**
+		 * Animates the word tiles sequentially with a 3D flip and color change, then opens the congrats modal.
+		 */
+		function animateWin() {
+			const totalFlipTime = 400;  // ms for the full flip (200ms in, 200ms out)
+			const delayPerTile = 100;   // ms sequential delay between tiles
+			// Include any background classes your tiles might have
+			const currentBgClasses = ['bg-purple-600', 'bg-blue-600', 'bg-red-600', 'bg-yellow-600']; 
+
+				// 1. START THE PULSE ANIMATION IMMEDIATELY
+				if (mainGameContainer) {
+					mainGameContainer.classList.add('win-pulse'); 
+				}
+				
+			wordTiles.forEach((tile, index) => {
+				const sequentialDelay = index * delayPerTile;
+				
+				// --- STEP 1: Flip In (0ms to 200ms) ---
+				setTimeout(() => {
+					// Set transition for the first half of the flip
+					tile.style.transition = 'transform 0.2s ease-in';
+					// Rotate to 90 degrees (the invisible edge)
+					tile.style.transform = 'rotateX(90deg)';
+				}, sequentialDelay);
+
+				// --- STEP 2: Color Change and Flip Out (200ms to 400ms) ---
+				setTimeout(() => {
+					// Remove old color classes and apply the winning style (color change happens here)
+					tile.classList.remove(...currentBgClasses);
+					tile.classList.add('win-tile');
+
+					// Set transition for the second half of the flip
+					tile.style.transition = 'transform 0.2s ease-out';
+					// Rotate from 90 degrees back to 0 degrees
+					tile.style.transform = 'rotateX(0deg)';
+				}, sequentialDelay + totalFlipTime / 2); // Time is sequential delay + 200ms
+			});
+
+			// Calculate total time needed: (Tiles * delay) + Full flip time + Buffer
+			const totalDelay = (wordTiles.length * delayPerTile) + totalFlipTime + 50; 
+			
+			// Open the modal and cleanup styles after all animations are complete
+			setTimeout(() => {
+			
+				if (mainGameContainer) {
+					mainGameContainer.classList.remove('win-pulse');
+				}
+				// Cleanup inline styles for the next game
+				wordTiles.forEach(tile => {
+					tile.style.transition = '';
+					tile.style.transform = '';
+					// Remove the win class, but keep the current word intact visually
+				});
+
+				// Open Modal
+				document.getElementById('final-steps-display').textContent = currentHistory.length - 1;
+				openModal('congrats-modal');
+			}, totalDelay);
+		}
         
         // Modal Handlers
         function openModal(modalId) {
@@ -674,13 +790,13 @@
             // 1. Get the Goal Word
 			const goal = document.getElementById('goal-word-display').textContent;
 			// 2. Define the message
-			const welcomeMessage = `Reach the word '${goal}'! Start by selecting a letter to replace it.`;
+			const gameStartMessage = `Goal is '${goal}'! Start by selecting a letter to replace it.`;
 			// 3. Display the message on game start
-			showTemporaryMessage(welcomeMessage, '#3b82f6', 5000); // Use a blue background and 5-second duration
+			showTemporaryMessage(gameStartMessage, '#3b82f6', 4000); // Use a blue background and 5-second duration
 	
 			// Initialize steps and history
             stepsDisplayGame.textContent = '0'; 
-            ladderHistory.innerHTML = `<span class="px-3 py-1 bg-purple-600 text-white rounded-lg font-bold">${startWord}</span>`;
+            ladderHistory.innerHTML = `<span class="px-1 py-0 bg-purple-600 text-white rounded-lg font-bold text-sm">${startWord}</span>`;
             currentHistory = [startWord];
             
             // Ensure history is scrolled to the start (left) initially
@@ -761,6 +877,7 @@
 				}, 400);
 				
 				showTemporaryMessage(`Error: '${newWordUC}' is not a valid word.`, '#ef4444');
+				revertWordDisplay(); // <-- Revert on error
 				return;
 			}
 
@@ -772,7 +889,7 @@
 			ladderHistory.innerHTML = currentHistory.map((word, index) => {
 				const colorClass = index === 0 ? 'bg-purple-600' : (index === currentHistory.length - 1 ? 'bg-teal-500 text-gray-900' : 'bg-blue-600');
 				const arrow = index > 0 ? `<span class="text-gray-400">&rarr;</span> ` : '';
-				return `${arrow}<span class="px-3 py-1 ${colorClass} rounded-lg font-bold">${word}</span>`;
+				return `${arrow}<span class="px-1 py-0 ${colorClass} rounded-lg font-bold">${word}</span>`;
 			}).join('');
 			
 			scrollHistoryToRight();
@@ -785,8 +902,8 @@
 
 			// Check for win condition
 			if (newWordUC === goalWord) {
-				document.getElementById('final-steps-display').textContent = currentHistory.length - 1;
-				openModal('congrats-modal');
+				animateWin();
+				
 				return; 
 			}
 
@@ -855,6 +972,19 @@
             });
 
             // 5. GAME BUTTONS
+			
+			// New Reset Word Button: Resets the word display to the last confirmed word.
+            document.getElementById('reset-word-btn').addEventListener('click', () => {
+                if (currentHistory.length > 0) {
+                    revertWordDisplay(); // The existing function is perfect for this!
+                    activePosition = null; 
+                    resetTileColors();
+                    showTemporaryMessage("Current word reset to last valid move.", '#3b82f6', 1500);
+                } else {
+                    showTemporaryMessage("Cannot reset, no moves have been made.", '#ef4444', 1500);
+                }
+            });
+			
             document.getElementById('quit-game-btn').addEventListener('click', () => {
                 showTemporaryMessage("Quitting game...", '#8b5cf6', 1500);
                 // In a real game, you might ask for confirmation here
@@ -877,7 +1007,7 @@
                     ladderHistory.innerHTML = currentHistory.map((word, index) => {
                         const colorClass = index === 0 ? 'bg-purple-600' : (index === currentHistory.length - 1 ? 'bg-teal-500 text-gray-900' : 'bg-blue-600');
                         const arrow = index > 0 ? `<span class="text-gray-400">&rarr;</span> ` : '';
-                        return `${arrow}<span class="px-3 py-1 ${colorClass} rounded-lg font-bold">${word}</span>`;
+                        return `${arrow}<span class="px-1 py-0 ${colorClass} rounded-lg font-bold">${word}</span>`;
                     }).join('');
 
                     // Scroll to the rightmost side after update (New)
