@@ -346,7 +346,7 @@
     </div>
     
     <div class="flex items-center justify-center px-4 py-2 rounded-xl bg-gray-800 shadow-xl space-x-4">
-        <div id="history-scroll-container" class="w-full overflow-x-auto whitespace-nowrap py-2 custom-scrollbar">
+        <div id="history-scroll-container" class="w-full overflow-x-auto whitespace-nowrap py-0.5 custom-scrollbar">
             <div id="ladder-history" class="text-white text-lg font-mono inline-flex items-center space-x-2">
                 </div>
         </div>
@@ -796,7 +796,7 @@
 	
 			// Initialize steps and history
             stepsDisplayGame.textContent = '0'; 
-            ladderHistory.innerHTML = `<span class="px-1 py-0 bg-purple-600 text-white rounded-lg font-bold text-sm">${startWord}</span>`;
+            ladderHistory.innerHTML = `<span class="px-1 py-0 bg-purple-600 text-white rounded-lg font-bold">${startWord}</span>`;
             currentHistory = [startWord];
             
             // Ensure history is scrolled to the start (left) initially
