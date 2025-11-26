@@ -859,6 +859,16 @@
 				}
 			}
 			if (diffCount !== 1) {
+			
+				// V A L I D A T I O N  E R R O R (Start Shake)
+        
+				currentWordContainer.classList.add('shake-error');
+
+				// Remove the shake class after 400ms (the animation duration)
+				setTimeout(() => {
+					currentWordContainer.classList.remove('shake-error');
+				}, 400);
+				
 				showTemporaryMessage(`Error: Word must change by exactly one letter from '${currentWordUC}'.`, '#ef4444');
 				revertWordDisplay(); // <-- Revert on error
 				return;
@@ -869,7 +879,6 @@
 				
 				// V A L I D A T I O N  E R R O R (Start Shake)
         
-				// Use your existing variable: currentWordContainer
 				currentWordContainer.classList.add('shake-error');
 
 				// Remove the shake class after 400ms (the animation duration)
