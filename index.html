@@ -292,32 +292,58 @@
         
         <div id="game-screen" class="hidden w-full max-w-lg p-4 sm:p-0 space-y-6">
     
-    <div id="top-bar-controls" class="flex justify-between items-center px-2 py-3">
-        <div class="flex space-x-3">
-            <button id="settings-btn-game" class="open-modal-btn p-2 rounded-full bg-gray-700 hover:bg-gray-600 transition-colors" data-modal="settings-modal">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-white">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.514c.55 0 1.02.398 1.11.94 1.29.548 2.378 1.554 3.076 2.776 1.11 1.956 1.11 4.238 0 6.194a7.55 7.55 0 01-3.076 2.776c-.09.542-.56.94-1.11.94h-2.514c-.55 0-1.02-.398-1.11-.94a7.55 7.55 0 01-3.076-2.776c-1.11-1.956-1.11-4.238 0-6.194a7.55 7.55 0 013.076-2.776zM12 12.75a.75.75 0 100-1.5.75.75 0 000 1.5z" />
-                </svg>
-            </button>
-            <button id="how-to-play-btn-game" class="open-modal-btn p-2 rounded-full bg-gray-700 hover:bg-gray-600 transition-colors" data-modal="how-to-play-modal">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-white">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712L12 15l-2.121-2.121c-1.172-1.025-1.172-2.687 0-3.712zM15 11.25a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
-                </svg>
-            </button>
+			<div id="top-bar-controls" class="flex justify-between items-center px-2 py-3">
+			<div class="flex space-x-3">
+				<button id="settings-btn-game" class="open-modal-btn p-2 rounded-full bg-gray-700 hover:bg-gray-600 transition-colors" data-modal="settings-modal">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-white">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.514c.55 0 1.02.398 1.11.94 1.29.548 2.378 1.554 3.076 2.776 1.11 1.956 1.11 4.238 0 6.194a7.55 7.55 0 01-3.076 2.776c-.09.542-.56.94-1.11.94h-2.514c-.55 0-1.02-.398-1.11-.94a7.55 7.55 0 01-3.076-2.776c-1.11-1.956-1.11-4.238 0-6.194a7.55 7.55 0 013.076-2.776zM12 12.75a.75.75 0 100-1.5.75.75 0 000 1.5z" />
+					</svg>
+				</button>
+				<button id="how-to-play-btn-game" class="open-modal-btn p-2 rounded-full bg-gray-700 hover:bg-gray-600 transition-colors" data-modal="how-to-play-modal">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-white">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712L12 15l-2.121-2.121c-1.172-1.025-1.172-2.687 0-3.712zM15 11.25a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+					</svg>
+				</button>
+				<button id="hint-btn" class="p-2 rounded-full bg-yellow-500 hover:bg-yellow-400 transition-colors text-white">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+					<path d="M12 19V6M5 12l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2"/>
+					</svg>
+				</button>
+			</div>
+			<div class="flex space-x-3">
+				<button id="reset-word-btn" class="p-2 rounded-full bg-yellow-600 hover:bg-yellow-500 transition-colors text-white font-bold text-sm">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.751m-2.885 8.167v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 01-13.803 3.751m-5.462-8.417a8.25 8.25 0 0113.803-3.751" />
+					</svg>
+				</button>
+				<button id="quit-game-btn" class="p-2 rounded-full bg-red-600 hover:bg-red-500 transition-colors">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-white">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H5a3 3 0 01-3-3V7a3 3 0 013-3h5a3 3 0 013 3v1" />
+					</svg>
+				</button>
+			</div>
+		</div>
+		
+		<div id="solution-modal" class="modal-overlay fixed inset-0 hidden items-center justify-center z-40 bg-black bg-opacity-70">
+            <div class="modal-content-solution bg-[#1e293b] rounded-lg shadow-2xl p-8 max-w-lg mx-4 border-t-4 border-red-500 relative text-center">
+                
+                <div class="text-red-400 mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-16 h-16 mx-auto">
+                        <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                
+                <h3 class="congrats-title font-extrabold text-white mb-6">🔍 Solution Revealed!</h3>
+                
+                <div id="solution-path-content" class="mb-8 p-4 rounded-lg">
+                    <p class="text-white">Loading solution...</p>
+                </div>
+
+                <button id="back-to-menu-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-full shadow-md transition-colors duration-200">
+                    Back to Menu
+                </button>
+            </div>
         </div>
-        <div class="flex space-x-3">
-            <button id="reset-word-btn" class="p-2 rounded-full bg-yellow-600 hover:bg-yellow-500 transition-colors text-white font-bold text-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.751m-2.885 8.167v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 01-13.803 3.751m-5.462-8.417a8.25 8.25 0 0113.803-3.751" />
-                </svg>
-            </button>
-            <button id="quit-game-btn" class="p-2 rounded-full bg-red-600 hover:bg-red-500 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-white">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H5a3 3 0 01-3-3V7a3 3 0 013-3h5a3 3 0 013 3v1" />
-                </svg>
-            </button>
-        </div>
-    </div>
 
 
     <header class="text-white text-center">
@@ -511,7 +537,7 @@
                     </svg>
                 </div>
                 
-                <h2 class="congrats-title font-extrabold text-white mb-2">🎉 CONGRATULATIONS!</h2>
+                <h3 class="congrats-title font-extrabold text-white mb-2">🎉 CONGRATULATIONS!</h3>
                 <p class="text-lg sm:text-xl text-gray-300 mb-6">You successfully completed the level!</p>
                 
                 <div class="mb-8 p-4 bg-gray-700 rounded-lg">
@@ -573,37 +599,87 @@
 		// Function to fetch and load the dictionaries
 		async function loadDictionary() {
 			try {
-				// Load both dictionaries concurrently
-				const [bigDictResponse, curatedDictResponse] = await Promise.all([
+				// Load all three data structures concurrently:
+				const [bigDictResponse, curatedDictResponse, graphResponse] = await Promise.all([
 					// 1. Fetch the big dictionary (for validation)
 					fetch('words_345_letter_dictionary.json'), 
 					// 2. Fetch the curated dictionary (for start/goal selection)
-					fetch('curated_word_dictionary.json') 
+					fetch('curated_word_dictionary.json'), 
+					// 3. Fetch the pre-built graph (for instant search)
+					fetch('prebuilt_graphs.json') 
 				]);
 
-				if (!bigDictResponse.ok || !curatedDictResponse.ok) {
-					const errorMsg = `HTTP error! status: Big: ${bigDictResponse.ok ? 'OK' : bigDictResponse.status}, Curated: ${curatedDictResponse.ok ? 'OK' : curatedDictResponse.status}`;
+				if (!bigDictResponse.ok || !curatedDictResponse.ok || !graphResponse.ok) {
+					const errorMsg = `HTTP error! status: Big: ${bigDictResponse.ok ? 'OK' : bigDictResponse.status}, Curated: ${curatedDictResponse.ok ? 'OK' : curatedDictResponse.status}, Graph: ${graphResponse.ok ? 'OK' : graphResponse.status}`;
 					throw new Error(errorMsg);
 				}
 				
-				// Store the flat dictionary for validation 
 				flatDictionary = await bigDictResponse.json(); 
-				
-				// Store the curated dictionary for word generation 
 				curatedDictionary = await curatedDictResponse.json(); 
+				prebuiltGraphs = await graphResponse.json(); // <-- NEW: Store the pre-built graph
 				
 				isDictionaryLoaded = true;
 
-				console.log(`Dictionaries loaded successfully. Big words: ${Object.keys(flatDictionary).length}, Curated levels: ${Object.keys(curatedDictionary).length}`);
-				showTemporaryMessage("Dictionaries ready! Start the game.", '#10b981', 3000);
+				console.log(`Dictionaries loaded successfully. Big words: ${Object.keys(flatDictionary).length}, Curated levels: ${Object.keys(curatedDictionary).length}, Graphs built for lengths: ${Object.keys(prebuiltGraphs).join(', ')}`);
+				showTemporaryMessage("All data ready! Start the game.", '#10b981', 3000);
 
 			} catch (error) {
-				console.error("Failed to load dictionaries:", error);
-				showTemporaryMessage(`FATAL ERROR: Failed to load dictionaries. Check console.`, '#ef4444', 8000);
+				console.error("Failed to load data:", error);
+				showTemporaryMessage(`FATAL ERROR: Failed to load data. Check console.`, '#ef4444', 8000);
 			}
 		}
 		
+		
+		// Opens the solution modal and populates it with the found word ladder path. //
+		function displaySolutionPath() {
+			const solutionContent = document.getElementById('solution-path-content');
+			const startWord = document.getElementById('start-word-display').textContent;
+			const goalWord = document.getElementById('goal-word-display').textContent;
+
+			if (!currentLadderPath || currentLadderPath.length === 0) {
+				solutionContent.innerHTML = `
+					<p class="text-xl text-red-400 font-bold mb-2">Oops!</p>
+					<p class="text-lg text-gray-300">Could not retrieve the shortest path for this puzzle.</p>
+				`;
+			} else {
+				// Map the array of words to formatted HTML tiles
+				const pathHtml = currentLadderPath.map((word, index) => {
+					let colorClass = 'bg-blue-600';
+					if (index === 0) {
+						colorClass = 'bg-purple-600'; // Start word
+					} else if (index === currentLadderPath.length - 1) {
+						colorClass = 'bg-red-600'; // Goal word
+					}
+
+					// Add arrow unless it's the first word
+					const arrow = index > 0 ? `<span class="text-gray-400 text-xl mr-2">&rarr;</span>` : '';
+					return `${arrow}<span class="px-2 py-1 ${colorClass} text-white rounded-lg font-bold shadow-sm">${word}</span>`;
+				}).join('');
+
+				solutionContent.innerHTML = `
+					<p class="text-lg text-gray-300 mb-4">The shortest solution is:</p>
+					<div class="flex flex-wrap items-center justify-center p-3 rounded-lg bg-gray-700 shadow-inner max-h-40 overflow-y-auto space-x-2 space-y-2">
+						${pathHtml}
+					</div>
+					<p class="mt-4 text-xl font-bold text-yellow-400">Total Steps: ${currentLadderPath.length - 1}</p>
+				`;
+			}
+
+			openModal('solution-modal');
+		}
+		
 			// --- HELPER FUNCTION FOR WORD DIFFERENCE (NEW) ---
+			
+		// Universal handler to close all modals and navigate back to the level selector. //
+		function handleBackToMenu() {
+			// 1. Close all modals, just in case multiple are open or hidden differently
+			document.querySelectorAll('.modal-overlay').forEach(modal => {
+				modal.classList.add('hidden');
+			});
+			
+			// 2. Switch the view back to the level selector screen
+			showLevelSelector();
+		}
 
 		function getLetterDifference(word1, word2) {
 
@@ -629,90 +705,70 @@
 
 		}
 		
-		/**
-		 * Optimized check if a path exists between startWord and goalWord using a 
-		 * pattern-matching BFS (similar to the provided Python code).
-		 * It uses the globally available flatDictionary for the word list.
-		 * * @param {string} start The starting word.
-		 * @param {string} goal The target word.
-		 * @param {number} length The length of the words.
-		 * @returns {boolean} True if a path exists, false otherwise.
-		 */
-		function hasValidPath(start, goal, length) {
-			if (!flatDictionary) {
-				console.error("Dictionary not loaded for BFS check.");
-				return false;
+		//		 BFS		 //
+		// Helper function to generate patterns (C*T, *AT, CA*)
+		function getPatterns(word) {
+			const patterns = [];
+			for (let i = 0; i < word.length; i++) {
+				const pattern = word.slice(0, i) + "*" + word.slice(i + 1);
+				patterns.push(pattern);
+			}
+			return patterns;
+		}
+
+		function findWordLadder(start, goal) {
+			if (!prebuiltGraphs) {
+				return "Graph data not loaded.";
 			}
 
-			// 1. Prepare the dictionary and initialize the pattern map
-			// Only consider words of the correct length, and ensure the start word is included for neighbor generation.
-			let wordList = Object.keys(flatDictionary).filter(word => word.length === length);
-			// Add the starting word to the list if it's not already in the dictionary (e.g., if flatDictionary is filtered)
-			if (!wordList.includes(start)) {
-				 wordList.push(start);
+			const startUpper = start.toUpperCase();
+			const goalUpper = goal.toUpperCase();
+			const length = startUpper.length;
+			
+			// Get the graph structure specific to the word length
+			const graph = prebuiltGraphs[String(length)];
+
+			if (!graph) {
+				return `Error: Pre-built graph data for ${length}-letter words not found.`;
 			}
-			
-			// Use a Map for adjacency list: {"cax": ["cat", "car"], "xat": ["cat"]}
-			const patternMap = new Map();
 
-			// Helper function to generate patterns
-			const getPatterns = (word) => {
-				const patterns = [];
-				for (let j = 0; j < length; j++) {
-					const pattern = word.slice(0, j) + "X" + word.slice(j + 1);
-					patterns.push(pattern);
-				}
-				return patterns;
-			};
+			// BFS Initialization
+			const queue = [startUpper];
+			// parentMap acts as both the path tracker and the 'visited' set
+			const parentMap = new Map([[startUpper, null]]); 
 
-			// 2. Build the Adjacency Map (the Graph)
-			for (const word of wordList) {
-				for (const pattern of getPatterns(word)) {
-					if (!patternMap.has(pattern)) {
-						patternMap.set(pattern, []);
-					}
-					patternMap.get(pattern).push(word);
-				}
-			}
-			
-			// 3. Initialize BFS structures
-			const queue = [start];
-			const visited = new Set([start]);
-			
-			// The ladder length isn't strictly needed for just checking existence, but we can track it.
-			// let ladderLength = 1;
-
-			// 4. Run BFS
+			// BFS Loop
 			while (queue.length > 0) {
-				const levelSize = queue.length;
+				const currentWord = queue.shift();
 
-				// Process all words at the current level
-				for (let i = 0; i < levelSize; i++) {
-					const currentWord = queue.shift();
-					
-					if (currentWord === goal) {
-						// Path found!
-						return true; 
+				if (currentWord === goalUpper) {
+					// Path found! Reconstruct the ladder.
+					let path = [];
+					let word = goalUpper;
+					while (word !== null) {
+						path.push(word);
+						word = parentMap.get(word);
 					}
+					return path.reverse();
+				}
 
-					// Find neighbors using the pattern map
-					for (const pattern of getPatterns(currentWord)) {
-						// Get all words that match this pattern
-						const neighbors = patternMap.get(pattern) || [];
+				// --- INSTANT NEIGHBOR LOOKUP using the pre-built graph ---
+				for (const pattern of getPatterns(currentWord)) {
+					// Look up the list of matching words (e.g., all words matching "C*T")
+					const neighbors = graph[pattern] || []; 
 
-						for (const neiWord of neighbors) {
-							if (!visited.has(neiWord)) {
-								visited.add(neiWord);
-								queue.push(neiWord);
-							}
+					for (const neiWord of neighbors) {
+						// If the word hasn't been visited yet
+						if (!parentMap.has(neiWord)) {
+							parentMap.set(neiWord, currentWord);
+							queue.push(neiWord);
 						}
 					}
 				}
-				// ladderLength++; // Not needed for path existence check
 			}
-			
+
 			// Path not found
-			return false;
+			return "No valid word ladder found.";
 		}
 
 		// --- END BREADTH-FIRST SEARCH (BFS) FUNCTION ---
@@ -1080,37 +1136,62 @@
                     const name = option.dataset.levelName;
                     
                     // --- UPDATED LOGIC FOR WORD SELECTION (Ensures difference > 1) ---
-                    const lenStr = len.toString();
-                    
-                    if (!curatedDictionary || !curatedDictionary[lenStr]) {
-                        showTemporaryMessage(`Error: Curated word list for ${len}-letters is missing.`, '#ef4444');
-                        levelDropdownMenu.classList.add('hidden');
-                        return;
-                    }
+			const lenStr = len.toString();
+					
+			if (!curatedDictionary || !curatedDictionary[lenStr]) {
+				// Assuming showTemporaryMessage is defined for UI feedback
+				console.error(`Error: Curated word list for ${len}-letters is missing.`);
+				// levelDropdownMenu.classList.add('hidden'); // Assuming UI element for context
+				return;
+			}
 
-                    const wordList = curatedDictionary[lenStr];
-                    let startWord = '';
-                    let goalWord = '';
-                    let difference = 0; // Declare difference variable
+			const wordList = curatedDictionary[lenStr];
+			let startWord = '';
+			let goalWord = '';
+			let difference = 0; 
+			let attempts = 0;
+			const MAX_ATTEMPTS = 100;
 
-                    // Function to pick a random word from the list
-                    const pickRandomWord = (list) => list[Math.floor(Math.random() * list.length)];
+			// Function to pick a random word from the list
+			const pickRandomWord = (list) => list[Math.floor(Math.random() * list.length)];
 
-                    // Ensure we have enough words
-                    if (wordList.length < 2) {
-                         showTemporaryMessage(`Error: Not enough unique words in the curated list for ${len}-letters.`, '#ef4444');
-                         levelDropdownMenu.classList.add('hidden');
-                         return;
-                    }
-                    
-                    // Loop until start and goal words differ by 2 or more letters
-                    do {
-                        startWord = pickRandomWord(wordList);
-                        goalWord = pickRandomWord(wordList);
-                        difference = getLetterDifference(startWord, goalWord); // Use the helper function
-                    } while (difference <= 1);
-                    
-                    // --- END UPDATED LOGIC ---
+			// Ensure we have enough words
+			if (wordList.length < 2) {
+				console.error(`Error: Not enough unique words in the curated list for ${len}-letters.`);
+				return;
+			}
+					
+			// Loop until start and goal words differ by 2 or more letters
+			do {
+				startWord = pickRandomWord(wordList);
+				goalWord = pickRandomWord(wordList);
+				difference = getLetterDifference(startWord, goalWord); // Use the helper function
+				attempts++;
+
+				if (attempts > MAX_ATTEMPTS) {
+					console.warn(`Warning: Could not find sufficiently different words in ${MAX_ATTEMPTS} attempts.`);
+					return; 
+				}
+			} while (difference <= 1);
+					
+			// --- BFS INTEGRATION: Find and Store the Path ---
+
+			// The words are guaranteed to be different enough and are uppercase by assumption.
+			const ladderPath = findWordLadder(startWord, goalWord);
+
+			if (typeof ladderPath === 'string') {
+				// Handle error or 'No path found' scenario
+				console.error(`BFS Failed for ${startWord} to ${goalWord}: ${ladderPath}`);
+				// Optionally: currentLadderPath = null;
+			} else {
+				// Path found (ladderPath is an array of words)
+				// Store the solution path in the global variable for UI consumption
+				currentLadderPath = ladderPath; 
+				console.log(`New challenge set: ${startWord} to ${goalWord}. Path found with length: ${currentLadderPath.length}`);
+				console.log("Solution Path:", currentLadderPath);
+			}
+
+			// --- END UPDATED LOGIC ---
                     
                     levelDropdownMenu.classList.add('hidden');
                     showGameScreen(len, name, startWord, goalWord);
@@ -1152,9 +1233,16 @@
             });
 			
             document.getElementById('quit-game-btn').addEventListener('click', () => {
-                showTemporaryMessage("Quitting game...", '#8b5cf6', 1500);
-                // In a real game, you might ask for confirmation here
-                setTimeout(showLevelSelector, 1500);
+                // If a game is active (history has the start word)
+                if (currentHistory.length > 0) {
+                    showTemporaryMessage("Quitting game... Solution is ready.", '#8b5cf6', 1500);
+                    // Open the new solution modal immediately
+                    setTimeout(displaySolutionPath, 1500);
+                } else {
+                    // If no game is started, just go to the menu
+                    showTemporaryMessage("Quitting game...", '#8b5cf6', 1500);
+                    setTimeout(showLevelSelector, 1500);
+                }
             });
 
             document.getElementById('undo-btn').addEventListener('click', () => {
